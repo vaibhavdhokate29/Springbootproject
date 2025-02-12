@@ -1,4 +1,5 @@
  <!DOCTYPE html>
+ <html xmlns:th="http://www.thymeleaf.org">
 <meta charset="utf-8">
 <title>StartBot</title>
 
@@ -14,8 +15,7 @@
 <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 
 
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
@@ -203,8 +203,9 @@ body {
 					aria-controls="navbarResponsive" aria-expanded="false"
 					aria-label="Toggle navigation" style="color: #fff;">
 					<i class="fa fa-align-justify"></i>
+						</button>
+			
 			</div>
-			</button>
 
 			<div class="collapse navbar-collapse" id="navbarResponsive"
 				style="color: #fff;">
@@ -226,8 +227,9 @@ body {
 
 				</ul>
 			</div>
+				</nav>
+			
 	</div>
-	</nav>
 	<div class="container main_mt">
 		<h5 class="text-center"
 			style="background: #f7f7f7; border-bottom: 2px solid #e3e3e3; padding: 10px;">StartBot
@@ -286,14 +288,8 @@ body {
 				</tr>
 				<tr>
 					<!--<td>Timer</td>
- <td><select id="timerDropdown" required onchange=Timer(this);>
-        <option value="3600000">1 hour</option>
-        <option value="1800000">30 minutes</option>
-        <option value="900000">0.5 minutes</option>
-        <!-- Add more options as needed //
-    </select>
- </td>-->
-					<td>Bot Name</td>
+ 
+				<!--  	<td>Bot Name</td>-->
 
 					<td><select id="idBotName" name="idBotName" required
 						onchange=DashboardCreation(this);>
@@ -301,14 +297,14 @@ body {
 -->
 					</select></td>
 
-					<td>Department</td>
+				<!-- 	<td>Department</td> -->
 					<td><select id="idDepartmant" name="idDepartmant" required
 						onchange=DashboardCreation(this);>
 							<!--							<option disabled>Select Department</option>
 -->
 					</select></td>
 
-					<td>Location</td>
+					<!-- <td>Location</td> -->
 					<td><select id="idLocation" name="idLocation" required
 						onchange=DashboardCreation(this);>
 							<!--						<option disabled >Select Location</option>
@@ -333,9 +329,9 @@ body {
 					<!-- 20 feb 2024 aishwarya -->
 
 
-					<td>Date</td>
+					<!-- <td>Date</td>
 					<td><input type="datetime-local" id="Test_DatetimeLocal">
-					</td>
+					</td> -->
 				</tr>
 
 				<tr>
@@ -357,8 +353,7 @@ body {
 						<div style="font-size: 24px;" id="Duration_Timer">00:00:00</div>
 						<div
 							style="text-align: left; padding-left: 20px; text-align: center;">
-							<a class="eXCEL-create2" style="cursor: pointer;"
-								onclick="Countdown(this)">Start</a>
+							<a class="eXCEL-create2" style="cursor: pointer;" onclick="Countdown(this)">Start</a>
 						</div>
 					</td>
 
@@ -374,11 +369,11 @@ body {
 
 				<!-- 20 feb 2024 aishwarya -->
 
-				</tr>
+			
 				<tr>
 
 					<td colspan="12">
-						<table id="GridData_dt" class="display" width="100%">
+						<table id="GridData_dt" class="display" >
 							<thead>
 								<tr>
 									<th id="sear">Process Id</th>

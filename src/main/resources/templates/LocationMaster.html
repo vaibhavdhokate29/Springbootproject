@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
 	<meta charset="ISO-8859-1">
@@ -1211,6 +1211,22 @@
 			flex: 1 1 auto;
 			padding: 5px;
 		}
+			
+		.text-center
+
+{
+	border-bottom-color: transparent;
+	background:#eee;
+
+	color: #000;
+}
+		
+/* 
+.container-fluid2{
+		background-color: #eee;
+			flex: 1 1 auto;
+			padding: 5px;
+		} */
 
 	/*--< !--start preloader-->
 		
@@ -1382,8 +1398,9 @@
 					class="navbar-toggler navbar-toggler-right" type="button" aria-controls="navbarResponsive"
 					aria-expanded="false" aria-label="Toggle navigation" style="color:#fff;">
 					<i class="fa fa-align-justify"></i>
+								</button>
+					
 			</div>
-			</button>
 
 			<div class="collapse navbar-collapse" id="navbarResponsive" style="color: #fff;">
 				<ul class="nav navbar-nav ml-auto">
@@ -1402,9 +1419,10 @@
 
 				</ul>
 			</div>
+				</nav>
+			
 	</div>
-	</nav>
-	</div>
+	
 	<div class="container main_mt">
 
 		<h5 class="text-center" style="background: #f7f7f7; border-bottom: 2px solid #e3e3e3; padding: 10px;">Location
@@ -1418,11 +1436,7 @@
 
 
 			<div id="tab01" class="tab-contents">
-
-				<p>
-
-
-				<div class="row">
+<div class="row">
 					<div class="col-md-11" style="margin: 0 auto;">
 						<div class="card card-outline-secondary" style="border:0px;">
 							<div class="card-body">
@@ -1437,12 +1451,12 @@
 							</div><!-- card body -->
 							<div class="form-group row">
 								<div class="col-md-2 col-form-label form-control-label">
-									<input type="Submit" name="btnSubmit" class="btn btn-primary" value="Submit"
+									<input type="Submit" name="btnSubmit"  style="position: absolute; bottom: -50px; right: -70px;" class="btn btn-primary" value="Submit"
 										onclick="LocationInsert(this);">
 								</div>
 
 								<div class="col-md-4">
-									<input type="submit" name="btnback" class="btn btn-primary" value="Back"
+									<input type="submit" name="btnback"  style="position: absolute; bottom: -50px; right: -170px;" class="btn btn-primary" value="Back"
 										onclick="Backlist(this);">
 
 								</div>
@@ -1452,7 +1466,6 @@
 						</div> <!-- card-outline -->
 					</div>
 				</div>
-				</p>
 			</div>
 		</div>
 		<hr>
@@ -1465,10 +1478,8 @@
 
 	<hr>
 
-	<div class="container-fluid">
+	<div class="container-fluid2">
 		<div class="text-center">Copyright CLOVER INFOTECH PVT.LTD.</div>
-
-	</div>
 
 	</div>
 

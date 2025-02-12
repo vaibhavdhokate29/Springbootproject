@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="ISO-8859-1">
 <title> Department Insert </title>
@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.0/css/responsive.dataTables.min.css">
+<link rel="stylesheet" href="css/style2.css">
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
@@ -1077,6 +1078,16 @@ a {
     flex: 1 1 auto;
     padding: 5px;
 }
+	
+		.text-center
+
+{
+	border-bottom-color: transparent;
+	background:#eee;
+
+	color: #000;
+}
+		
 <!--start preloader--> /*--
 .dark #preloader {
   background-color: #6259ca;
@@ -1169,124 +1180,93 @@ a {
     
 
 </head>
-<body onload="loadDropDown(this)">
-
+<body onload="loadDropDown()">
 <div id="mySidenav" class="sidenav">
-		<a></a>
-		<a></a>
-		<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-		<a></a>
-		<a></a>
-		<a></a>
-		<a th:href="@{${@environment.getProperty('path.location')}}">Location</a>
-		<a th:href="@{${@environment.getProperty('path.department')}}">Department</a>
-		<a th:href="@{${@environment.getProperty('path.bot')}}">Bot</a>
-	</div>
-
-
-
-	<div class="content">
-		<nav class="navbar navbar-expand-lg fixed-top" style="padding: 0px;">
-			<div class="container-fluid">
-		<a class="navbar-brand" th:href="@{${@environment.getProperty('path.loginimage')}}">
-    <img th:src="${@environment.getProperty('path.loginimage')}" class="img-fluid" width="140px" height="120px">
-</a>
-				<button data-toggle="collapse" data-target="#navbarResponsive"
-					class="navbar-toggler navbar-toggler-right" type="button" aria-controls="navbarResponsive"
-					aria-expanded="false" aria-label="Toggle navigation" style="color:#fff;">
-					<i class="fa fa-align-justify"></i>
-			</div>
-			</button>
-
-			<div class="collapse navbar-collapse" id="navbarResponsive" style="color: #fff;">
-				<ul class="nav navbar-nav ml-auto">
-					<li class="nav-item m10tr" role="presentation"><b>Welcome:</b>
-						<span id="SpnSession" class="nav-item m10tr" role="presentation"></span>
-					</li>
-
-					<li class="nav-item m10tr" role="presentation"> |
-						<i class="fa fa-sign-out" aria-hidden="true"> <span style="cursor:pointer" onclick="openNav()">Masters</span></i>
-
-					<li class="nav-item m10tr" role="presentation"><label>
-						<a th:href="@{${@environment.getProperty('path.login')}}"style="color:#fff !important;">
-								<i class="fa fa-sign-out" aria-hidden="true"> Log Out</i>
-							</a>
-						</label></li>
-
-				</ul>
-			</div>
-	</div>
-	</nav>
-	
-		<div class="container main_mt">
-			
-			<h5 class="text-center" style="background: #f7f7f7; border-bottom: 2px solid #e3e3e3; padding: 10px;">Department Insert Details</h5>
-			<br>
-			
-			
-			<div class="tabs">
-  
-  
-  <div id="tab01" class="tab-contents">
-    
-    <p>
-	
-	
-	<div class="row">
-                        <div class="col-md-11" style="margin: 0 auto;">
-                            <div class="card card-outline-secondary" style="border:0px;">
-                                <div class="card-body">
-                                    
-                                        <div class="form-group row">
-                                            <label class="col-md-2 col-form-label form-control-label">Department Name :</label>
-                                            <div class="col-md-4">                                               
-												<input class="form-control" maxlength="15" type="text" id="txtDepartment" name="txtDepartment">
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="form-group row">
-                                            <label class="col-md-2 col-form-label form-control-label">Location Name :</label>
-                                            <div class="col-md-4">                                               
-												 <select class="form-control"  id="idLocation" name="idLocation" required>
-                          <option value="">Select Location</option>
-                        </select>
-                                            </div>
-                                        </div>
-                                        
-                                </div><!-- card body -->
-                                <div class="form-group row">
-                                		<div class="col-md-2 col-form-label form-control-label">  
-                                			<input type="Submit" name="btnSubmit" class="btn btn-primary" value="Submit" onclick="DepartmentInsert(this);">
-                                		</div>
-                                	
-	                                             <div class="col-md-4">  
-	                                             <input type="submit" name="btnback" class="btn btn-primary" value="Back" onclick="Backlist(this);">
-								
-                                	</div>
-                                </div>
-								
-											
-                            </div> <!-- card-outline -->
-                        </div>
-                    </div>
-                   </p>
-  </div>
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a th:href="@{${@environment.getProperty('path.location')}}">Location</a>
+    <a th:href="@{${@environment.getProperty('path.department')}}">Department</a>
+    <a th:href="@{${@environment.getProperty('path.bot')}}">Bot</a>
 </div>
-			<hr>
-			
-			
 
-<br>
-			
-			</div>
-			
-			<hr>
-			
-			<div class="container-fluid" >
-			<div class="text-center">Copyright CLOVER INFOTECH PVT.LTD.</div>
-			
-			</div>
-			
-		</div>
+<div class="content">
+    <nav class="navbar navbar-expand-lg fixed-top" style="padding: 0px;">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{${@environment.getProperty('path.loginimage')}}">
+                <img th:src="${@environment.getProperty('path.loginimage')}" class="img-fluid" width="140px" height="120px">
+            </a>
+            <button data-toggle="collapse" data-target="#navbarResponsive"
+                class="navbar-toggler navbar-toggler-right" type="button" aria-controls="navbarResponsive"
+                aria-expanded="false" aria-label="Toggle navigation" style="color:#fff;">
+                <i class="fa fa-align-justify"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarResponsive" style="color: #fff;">
+                <ul class="nav navbar-nav ml-auto">
+                    <li class="nav-item m10tr" role="presentation"><b>Welcome:</b>
+                        <span id="SpnSession" class="nav-item m10tr" role="presentation"></span>
+                    </li>
+                    <li class="nav-item m10tr" role="presentation"> |
+                        <i class="fa fa-sign-out" aria-hidden="true"> <span style="cursor:pointer" onclick="openNav()">Masters</span></i>
+                    </li>
+                    <li class="nav-item m10tr" role="presentation">
+                        <label>
+                            <a th:href="@{${@environment.getProperty('path.login')}}" style="color:#fff !important;">
+                                <i class="fa fa-sign-out" aria-hidden="true"> Log Out</i>
+                            </a>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container main_mt">
+        <h5 class="text-center" style="background: #f7f7f7; border-bottom: 2px solid #e3e3e3; padding: 10px;">Department Insert Details</h5>
+        <br>
+        
+        <div class="tabs">
+            <div id="tab01" class="tab-contents">
+                <div class="row">
+                    <div class="col-md-11" style="margin: 0 auto;">
+                        <div class="card card-outline-secondary" style="border:0px;">
+                            <div class="card-body">
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label form-control-label">Department Name :</label>
+                                    <div class="col-md-4">                                               
+                                        <input class="form-control" maxlength="15" type="text" id="txtDepartment" name="txtDepartment">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label form-control-label">Location Name :</label>
+                                    <div class="col-md-4">                                               
+                                        <select class="form-control" id="idLocation" name="idLocation" required>
+                                            <option value="">Select Location</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div><!-- card body -->
+                            <div class="form-group row">
+                                <div class="col-md-2 col-form-label form-control-label">  
+                                    <input type="submit" name="btnSubmit" class="btn btn-primary" value="Submit" onclick="DepartmentInsert();">
+                                </div>
+                                <div class="col-md-4">  
+                                    <input type="button" name="btnback" class="btn btn-primary" value="Back" onclick="Backlist();">
+                                </div>
+                            </div>
+                        </div> <!-- card-outline -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <br>
+    </div>
+    
+    <hr>
+    <div class="container-fluid">
+        <div class="text-center">Copyright CLOVER INFOTECH PVT.LTD.</div>
+    </div>
+</div>
 </body>
 </html>

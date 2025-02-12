@@ -364,6 +364,10 @@ function DashboardCreation(obj) {
 			console.log("Total====" + _Unprocessed);
 			var _varBotId = document.getElementById("idBotName").value;
            
+
+            document.getElementById("idBotName").style.display = 'none';
+            document.getElementById("idDepartmant").style.display = 'none';
+            document.getElementById("idLocation").style.display = 'none';
 			document.getElementById("Processed_Data").value = _processed;
 
 			document.getElementById("Unprocessed_Data").value = _Unprocessed;
@@ -1282,7 +1286,8 @@ function importExcelFile3(obj) {
         contentType: false,
         success: function(responseText) {
             alert("Excel file imported successfully.");
-            
+            document.getElementById("pieChart11").innerHTML = "";
+
             document.getElementById("idBotName").style.display = 'none';
             document.getElementById("idDepartmant").style.display = 'none';
             document.getElementById("idLocation").style.display = 'none';

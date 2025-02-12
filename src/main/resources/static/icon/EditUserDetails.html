@@ -1,34 +1,217 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
-<meta charset="utf-8">
- <title>Edit Bot</title>
 <head>
-        <!-- Font Awesome CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<title>Edit Bot</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 
-    <!-- DataTable CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.0/css/responsive.dataTables.min.css">
+<!-- DATATABLE CSS -->
 
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.0/css/responsive.dataTables.min.css">
 
-    <!-- jQuery UI -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="js/User.js"></script>
+<script type="text/javascript">
 
-    <!-- DataTable JS -->
-    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+function LoadDataById(Obj)
+{
+	var _varname = window.sessionStorage.getItem('sessionname');
+	//alert(_varname);
+	document.getElementById("SpnSession").innerHTML = _varname;
+	
+	//alert("Welcome Here");
+	const params = new Proxy(new URLSearchParams(window.location.search), {
+		  get: (searchParams, prop) => searchParams.get(prop),
+		});
+		
+		let value = params.id; 
+		
+		
+		//alert(value);
+		///alert("ssfsdfsdfsdf");
+		// COde for Location
+		$.ajax({
+	        type: 'GET',
+	        url:  'http://localhost:9082/GetLocationlist',     
+	        dataType: 'json',
+	        async: true,
+	        success: function(result) {
+	        	//alert(result.length);
+	        	for (var i = 0; i < result.length; i++){		
+	        		//alert(result[i].LocationId);
+	        		//alert(result[i].LocationName);
+	                $('#idLocation').append('<option value="' + result[i].LocationId + '">' + result[i].LocationName + '</option>');
+	        	}
+	        	
+	        	DepartmentData(value); //call
+	        	
+	        },
+	        error: function(jqXHR, textStatus, errorThrown){
+	        	alert(errorThrown);
+	            alert(jqXHR.status + ' ' + jqXHR.responseText);
+	        }
+	   });
+		//Code for location end
+		
+}
 
-    <!-- Custom JS -->
-<!--  <script src="js/Bot.js"></script>   
- -->  
-   <script src="js/MasterData2.js"></script>
 
+function GetEditData(id){
+	
+	var _varname = window.sessionStorage.getItem('sessionname');
+	//alert(_varname);
+	document.getElementById("SpnSession").innerHTML = _varname;
+	//alert("GetEdit");
+	//alert("")
+	var postData= {		    
+  			"BotId" : id
+			}
+
+	//ajax fetchs assign value to html post
+			$.ajax({
+		    	url: 'http://localhost:9082/BotNameValues/PostBotEditDataEdit',
+		 		type: "POST",
+		 		contentType : 'application/json; charset=utf-8',
+		    	dataType : 'json',
+		 		data: JSON.stringify(postData),
+		        success: function(resultB) {        	
+				//alert("ASP Priyankan ne Code copy kiya. Bhagwan ne rakshas KHalid ko bheja hai.");
+				//alert(resultB[0].BotId);
+			//	alert(resultB[0].BotName);
+				//alert(resultB[0].LocationId);
+				//alert(resultB[0].DepartmentId);
+				//alert(resultB[0].IsActive);
+				
+				document.getElementById("txtBotName").value = resultB[0].BotName;
+				document.getElementById("idLocation").value = resultB[0].LocationId;
+				document.getElementById("idDepartmant").value = resultB[0].DepartmentId;
+				if(resultB[0].IsActive == false)
+					{
+					//alert("P");
+					document.getElementById("idActive").value = "0";
+					}
+				else
+					{
+					//alert("L");
+					document.getElementById("idActive").value = "1";
+					}
+		        	
+		        },
+		        error: function(jqXHR, textStatus, errorThrown){
+		        	alert(errorThrown);
+		            alert(jqXHR.status + ' ' + jqXHR.responseText);
+		        }
+		   });
+}
+
+function DepartmentData(id)
+{
+	//alert(id);	
+	  $.ajax({
+	        type: 'GET',
+	        url:  'http://localhost:9082/GetDepartmentlist',     
+	        dataType: 'json',
+	        async: true,
+	        success: function(resultR) {
+	        	//alert(result.length);resultR[i].DepartmentId
+	        	for (var i = 0; i < resultR.length; i++){		
+	                $('#idDepartmant').append('<option value="' + resultR[i].DepartmentId + '">' + resultR[i].DepartmentName + '</option>');
+	                
+	        	}
+	        	//alert(id);
+	     	GetEditData(id);
+	     	
+	        	
+	        },
+	        error: function(jqXHR, textStatus, errorThrown){
+	        	alert(errorThrown);
+	            alert(jqXHR.status + ' ' + jqXHR.responseText);
+	        }
+	   });
+	   
+	   //Deaprtment
+}
+function BotValuesEdit(Obj)
+{
+	
+	//alert("Invoke Submit");
+	if (document.getElementById("txtBotName").value == "")
+	{
+		alert("Bot name cannot be left blank");
+		document.getElementById("txtBotName").focus();
+		return false;
+		
+	}
+if(document.getElementById("idLocation").value == "")
+	{
+	alert("Please select Location");
+	document.getElementById("idLocation").focus();
+	return false;
+	}
+if(document.getElementById("idDepartmant").value == "")
+	{
+		alert("Please select Department");
+		document.getElementById("idDepartmant").focus();
+		return false;
+	}
+	
+const params = new Proxy(new URLSearchParams(window.location.search), {
+	  get: (searchParams, prop) => searchParams.get(prop),
+	});
+	
+	let value = params.id; 
+	//alert(value);
+	if(document.getElementById("txtBotName").value == "")
+		{
+			alert("Bot Name cannot be left blank!!");
+			return false;
+		}
+		var postData= {		    
+			"BotId" : value,
+			"BotName" : document.getElementById("txtBotName").value,
+			"LocationId" : document.getElementById("idLocation").value,
+			
+			"DepartmentId" : document.getElementById("idDepartmant").value,
+			"IsActive" : document.getElementById("idActive").value
+			}
+		
+		//Edit Ajax
+		$.ajax({
+		    	url: "http://localhost:9082/BotNameValues/PostUpdateBotData",
+		 		type: "POST",
+		 		contentType : 'application/json; charset=utf-8',
+		    	dataType : 'json',
+		 		data: JSON.stringify(postData),
+		        success: function(resultB) {     
+			   		
+				alert("Edited Succesfully!!!");
+					window.location.href="http://localhost:9082/BotList";
+			return false;
+		        	
+		        },
+		        error: function(jqXHR, textStatus, errorThrown){
+		        	alert(errorThrown);
+		            alert(jqXHR.status + ' ' + jqXHR.responseText);
+		        }
+		   });
+		// Edit Ajax end
+
+}
+function BackBotlist(obj)
+{
+	window.location.href="http://localhost:9082/BotList";
+}
+
+
+</script>
 <style>
+@media (min-width: 75em)
+{
+
+}
 
 .responsive-table {
   width: 100%;
@@ -211,7 +394,9 @@
     content: none;
   }
 }
+</style>
 
+<style>
 
 
 
@@ -1006,9 +1191,6 @@ a {
     flex: 1 1 auto;
     padding: 5px;
 }
- .hidden-label {
-            display: none;
-        }
 <!--start preloader--> /*--
 .dark #preloader {
   background-color: #6259ca;
@@ -1082,278 +1264,54 @@ a {
 
 </style>
 </head>
-<script type="text/javascript">
-var _varurl = window.location.host;
-
-function LoadDataById(Obj)
-{
-	  var _varname = window.sessionStorage.getItem('sessionname');
-        //alert(_varname);
-        document.getElementById("SpnSession").innerHTML = _varname;
-	
-	//alert("Welcome Here");
-	const params = new Proxy(new URLSearchParams(window.location.search), {
-		  get: (searchParams, prop) => searchParams.get(prop),
-		});
-		
-		let value = params.id; 
-		
-		
-		//alert(value);
-		///alert("ssfsdfsdfsdf");
-		// COde for Location
-		$.ajax({
-	        type: 'GET',
-	        url:  'http://'+_varurl+'/GetLocationlist',     
-	        dataType: 'json',
-	        async: true,
-	        success: function(result) {
-	        	//alert(result.length);
-	        	for (var i = 0; i < result.length; i++){		
-	        		//alert(result[i].LocationId);
-	        		//alert(result[i].LocationName);
-	                $('#idLocation').append('<option value="' + result[i].LocationId + '">' + result[i].LocationName + '</option>');
-	        	}
-	        	
-	        	
-	        	DepartmentData(value); //call
-	        	
-	        },
-	        error: function(jqXHR, textStatus, errorThrown){
-	        	alert(errorThrown);
-	            alert(jqXHR.status + ' ' + jqXHR.responseText);
-	        }
-	   });
-		//Code for location end
-		
-}
-
-
-
-
-function GetEditData(id){
-	
-	var _varname = window.sessionStorage.getItem('sessionname');
-	//alert(_varname);
-	document.getElementById("SpnSession").innerHTML = _varname;
-	//alert("GetEdit");
-	//alert("")
-	var postData= {		    
-  			"BotId" : id
-			}
-
-	//ajax fetchs assign value to html post
-			$.ajax({
-		    	url: 'http://'+_varurl+'/BotNameValues/PostBotEditDataEdit',
-		 		type: "POST",
-		 		contentType : 'application/json; charset=utf-8',
-		    	dataType : 'json',
-		 		data: JSON.stringify(postData),
-		        success: function(resultB) {        	
-				//alert("ASP Priyankan ne Code copy kiya. Bhagwan ne rakshas KHalid ko bheja hai.");
-				//alert(resultB[0].BotId);
-			//	alert(resultB[0].BotName);
-				//alert(resultB[0].LocationId);
-				//alert(resultB[0].DepartmentId);
-				//alert(resultB[0].IsActive);
-				
-				document.getElementById("txtBotName").value = resultB[0].BotName;
-				
-				if(resultB[0].IsActive == false)
-					{
-					//alert("P");
-					document.getElementById("idActive").value = "0";
-					}
-				else
-					{
-					//alert("L");
-					document.getElementById("idActive").value = "1";
-					}
-		        	
-		        },
-		        error: function(jqXHR, textStatus, errorThrown){
-		        	alert(errorThrown);
-		            alert(jqXHR.status + ' ' + jqXHR.responseText);
-		        }
-		   });
-}
-
-function DepartmentData(id)
-{
-	//alert(id);	
-	  $.ajax({
-	        type: 'GET',
-	        url:  'http://'+_varurl+'/GetDepartmentlist',     
-	        dataType: 'json',
-	        async: true,
-	        success: function(resultR) {
-	        	//alert(result.length);resultR[i].DepartmentId
-	        	for (var i = 0; i < resultR.length; i++){		
-	                $('#idDepartmant').append('<option value="' + resultR[i].DepartmentId + '">' + resultR[i].DepartmentName + '</option>');
-	                
-	        	}
-	        	//alert(id);
-	     	GetEditData(id);
-	     	
-	        	
-	        },
-	        error: function(jqXHR, textStatus, errorThrown){
-	        	alert(errorThrown);
-	            alert(jqXHR.status + ' ' + jqXHR.responseText);
-	        }
-	   });
-	   
-	   //Deaprtment
-}
-function BotValuesEdit(Obj)
-{
-	
-	//alert("Invoke Submit");
-	if (document.getElementById("txtBotName").value == "")
-	{
-		alert("Bot name cannot be left blank");
-		document.getElementById("txtBotName").focus();
-		return false;
-		
-	}
-if(document.getElementById("idLocation").value == "")
-	{
-	alert("Please select Location");
-	document.getElementById("idLocation").focus();
-	return false;
-	}
-if(document.getElementById("idDepartmant").value == "")
-	{
-		alert("Please select Department");
-		document.getElementById("idDepartmant").focus();
-		return false;
-	}
-	
-const params = new Proxy(new URLSearchParams(window.location.search), {
-	  get: (searchParams, prop) => searchParams.get(prop),
-	});
-	
-	let value = params.id; 
-	//alert(value);
-	if(document.getElementById("txtBotName").value == "")
-		{
-			alert("Bot Name cannot be left blank!!");
-			return false;
-		}
-		var postData= {		    
-			"BotId" : value,
-			"BotName" : document.getElementById("txtBotName").value,
-			"LocationId" : document.getElementById("idLocation").value,
-			
-			"DepartmentId" : document.getElementById("idDepartmant").value,
-			"IsActive" : document.getElementById("idActive").value
-			}
-		
-		//Edit Ajax
-		$.ajax({
-		    	url: "http://"+_varurl+"/BotNameValues/PostUpdateBotData",
-		 		type: "POST",
-		 		contentType : 'application/json; charset=utf-8',
-		    	dataType : 'json',
-		 		data: JSON.stringify(postData),
-		        success: function(resultB) {     
-			   		
-				alert("Edited Succesfully!!!");
-					window.location.href="http://"+_varurl+"/BotList";
-			return false;
-		        	
-		        },
-		        error: function(jqXHR, textStatus, errorThrown){
-		        	alert(errorThrown);
-		            alert(jqXHR.status + ' ' + jqXHR.responseText);
-		        }
-		   });
-		// Edit Ajax end
-
-}
-function BackBotlist(obj)
-{
-	window.location.href="http://"+_varurl+"/BotList";
-}
-   function openNav() {
-      document.getElementById("mySidenav").style.width = "250px";
-
-      document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
-    }
-
-		/* Set the width of the side navigation to 0 and the left margin of the page content to 0, and the background color of body to white */
-		function closeNav() {
-			document.getElementById("mySidenav").style.width = "0";
-
-			document.body.style.backgroundColor = "white";
-		}
-</script>
 <body onload="LoadDataById(this);">
 
-<div id="mySidenav" class="sidenav">
-		<a></a>
-		<a></a>
-		<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-		<a></a>
-		<a></a>
-		<a></a>
-		<a th:href="@{${@environment.getProperty('path.location')}}">Location</a>
-		<a th:href="@{${@environment.getProperty('path.department')}}">Department</a>
-		<a th:href="@{${@environment.getProperty('path.bot')}}">Bot</a>
-	</div>
+<div class="preload">
 
+  </div>
+   </div>
 
+<!-- preloader -->
+  <!--    <div id="preloader">
+        <div class="preloader">
+            <span></span>
+            <span></span>
+        </div>
+    </div>-->
+    <!-- preloader end  --> 
 
-	<div class="content">
-		<nav class="navbar navbar-expand-lg fixed-top" style="padding: 0px;">
-			<div class="container-fluid">
-		<a class="navbar-brand" th:href="@{${@environment.getProperty('path.loginimage')}}">
-    <img th:src="${@environment.getProperty('path.loginimage')}" class="img-fluid" width="140px" height="120px">
-</a>
-				<button data-toggle="collapse" data-target="#navbarResponsive"
-					class="navbar-toggler navbar-toggler-right" type="button" aria-controls="navbarResponsive"
-					aria-expanded="false" aria-label="Toggle navigation" style="color:#fff;">
-					<i class="fa fa-align-justify"></i>
-								</button>
-					
-			</div>
-
-			<div class="collapse navbar-collapse" id="navbarResponsive" style="color: #fff;">
-				<ul class="nav navbar-nav ml-auto">
-					<li class="nav-item m10tr" role="presentation"><b>Welcome:</b>
-						<span id="SpnSession" class="nav-item m10tr" role="presentation"></span>
-					</li>
-
-					
-
-					<li class="nav-item m10tr" role="presentation"><label>
-						<a th:href="@{${@environment.getProperty('path.login')}}"style="color:#fff !important;">
-								<i class="fa fa-sign-out" aria-hidden="true"> Log Out</i>
-							</a>
-						</label></li>
-
-				</ul>
-			</div>
+ 
+<div class="content">
+	<nav class="navbar navbar-expand-lg fixed-top" style="padding: 0px;">
+        <div class="container-fluid">
+		<a class="navbar-brand" href="#">		
+		<img src="http://localhost:9082/img/logo2.jpg" class="img-fluid" width="140px" height="120px">		
+		</a>		
+		<button data-toggle="collapse" data-target="#navbarResponsive" class="navbar-toggler navbar-toggler-right" 
+		type="button" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation" style="color:#fff;">
+		<i class="fa fa-align-justify"></i>		
+		</div>
+		</button> 	
+		
+			
+		<div class="collapse navbar-collapse" id="navbarResponsive" style="color: #fff;">
+                <ul class="nav navbar-nav ml-auto">
+                    
+                    <li class="nav-item m10tr" role="presentation"><b>Welcome :</b> 
+                    <span id="SpnSession" class="nav-item m10tr" role="presentation"></span>
+                    </li>
+                    <li class="nav-item m10tr" role="presentation"><label><a href="login.html" style="color:#fff !important;">
+					<i class="fa fa-sign-out" aria-hidden="true"></i>
+					</a>
+					</label></li>
+                    
+                </ul>
+          </div>
+        
     </nav>
 		<div class="container main_mt">
 			
-			<h5 class="text-center" style="background: #f7f7f7; border-bottom: 2px solid #e3e3e3; padding: 10px;">Start Bot Details</h5>
-			   <div class="form-group row">
-                                            <label class="col-md-2 col-form-label form-control-label">BOT Name :</label>
-                                            <div class="col-md-4">                                               
-												<input class="form-control" type="text" id="txtBotName" maxlength="15"  name="txtBotName">
-                                            </div>
-                                            
-                                          
-											
-											   <div class="col-md-4">  
-											 	<input type="file" id="fileInput">
-			<a class="Excel-Import" style="cursor:pointer" onclick="importExcelFile3()">Submit</a>
-
-											 </div>
-											 <div class="col-md-4">  
-	                                            <input type="submit" style="margin-left: 90px;" name="btnback" class="btn btn-primary" value="Back" onclick="BackBotlist(this);">
-											 </div> 
+			<h5 class="text-center" style="background: #f7f7f7; border-bottom: 2px solid #e3e3e3; padding: 10px;">User Edit Details</h5>
 			<br>
 			
 			
@@ -1363,20 +1321,54 @@ function BackBotlist(obj)
 
   
   <div id="tab01" class="tab-contents">
- 
+    
+    <p>
+	
+	
 	<div class="row">
                         <div class="col-md-11" style="margin: 0 auto;">
                             <div class="card card-outline-secondary" style="border:0px;">
                                 <div class="card-body">
                                     
-                                     
-                                      </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-2 col-form-label form-control-label">BOT Name :</label>
+                                            <div class="col-md-4">                                               
+												<input class="form-control" type="text" id="txtBotName" maxlength="15"  name="txtBotName">
+                                            </div>
+                                            <label class="col-md-2 col-form-label form-control-label">Location :</label>
+                                             <div class="col-md-4">  
+	                                            <select class="form-control" id="idLocation" name="idLocation" required  >
+												                  <option value="">Select Location</option>
+												               </select>
+											 </div>
+											 <label class="col-md-2 col-form-label form-control-label">Department :</label>
+                                             <div class="col-md-4">  
+	                                            <select class="form-control" id="idDepartmant" name="idDepartmant" required>
+											                  <option value="">Select Department</option>
+											               </select>
+											 </div>
+											 <label class="col-md-2 col-form-label form-control-label">IsActive :</label>
+                                             <div class="col-md-4">  
+	                                            <select class="form-control" id="idActive" name="idActive">
+											                  
+											                  <option value="1">Active</option>
+											                  <option value="0">In-Active</option>
+											               </select>
+											 </div>
+											 
+                                             <div class="col-md-4">  
+	                                            <input type="Submit" name="btnSubmit" class="btn btn-primary" value="Submit" onclick="BotValuesEdit(this);">
+											 </div>
+											 <div class="col-md-4">  
+	                                            <input type="submit" name="btnback" class="btn btn-primary" value="Back" onclick="BackBotlist(this);">
+											 </div>
+                                        </div>
                                 </div><!-- card body -->
 								
                             </div> <!-- card-outline -->
                         </div>
-                        
                     </div>
+                   </p>
   </div>
 </div>
 			<hr>

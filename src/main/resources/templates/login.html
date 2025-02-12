@@ -91,17 +91,18 @@ function encryptPassword(password) {
 
 </script>
 </head>
-<body onload="RemoveSession();getcookiedata();">
+<body onload="RemoveSession();getcookiedata(); ">
     <div class="main">
         <section class="sign-in">
-            <div class="container">
-                <div class="signin-content">
+            <div class="container"  style="position: absolute;  top: 600%; left: 25%;" >
+                <div class="signin-content" >
                     <div class="signin-image">
                         <figure><img src="img/login.png" alt="sign up image"></figure>
                     </div>
-                    <div class="signin-form">
+                    <div class="signin-form" >
                         <h2 class="form-title">Sign up</h2>
-                        <form id="loginForm" onsubmit="return validateLogin(event);">
+                 
+                        <form id="loginForm" onsubmit="return validateLogin(event);"  >
                             <div class="form-group">
                                 <label for="your_name"><i class="zmdi zmdi-account material-icons-name"></i></label>
                                 <input type="text" name="txtusername" id="txtusername" placeholder="Your Name" onkeydown="checkEnter(event)" />

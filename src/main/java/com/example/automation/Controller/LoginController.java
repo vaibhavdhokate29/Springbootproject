@@ -28,10 +28,10 @@ import com.example.automation.Service.LoginService;
  
 @Controller                                                         //attributes
 public class LoginController {
+	
 @Autowired
-
-    private LoginService userService;                                  
-    @GetMapping("/")
+ private LoginService userService;                                  
+    @GetMapping("/lo")
     //controller  render(call) my html
     public ModelAndView login(HttpSession session) {    	
     

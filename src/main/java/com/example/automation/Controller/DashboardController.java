@@ -88,6 +88,13 @@ public class DashboardController {
 		return mav;
 	}
 
+	@GetMapping("/UserList3")
+	public ModelAndView invokeregister() {
+		ModelAndView mav = new ModelAndView("UserRegister.html");
+		// mav.addObject("std", new DashboardDomain().Returnlist());
+		return mav;
+	}
+	
 	@GetMapping("/LocationMaster")
 	public ModelAndView invoke2() {
 		ModelAndView mav = new ModelAndView("LocationMaster");
@@ -95,6 +102,12 @@ public class DashboardController {
 		return mav;
 	}
 
+	@GetMapping("/UserList2")
+	public ModelAndView invokeuser() {
+		ModelAndView mav = new ModelAndView("UserList.html");
+		// mav.addObject("std", new DashboardDomain().Returnlist());
+		return mav;
+	}
 	@GetMapping("/BotList")
 	public ModelAndView invoke4() {
 		ModelAndView mav = new ModelAndView("BotList");

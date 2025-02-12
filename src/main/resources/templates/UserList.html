@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="ISO-8859-1">
 <title>User</title>
@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
 
 <link rel="stylesheet" href="css/style2.css">
-
+<script src="js/User.js"></script>
 <script type="text/javascript">
 
 var _varurl = window.location.host;
@@ -79,7 +79,7 @@ function InvokeUser(Obj){
 	            				{
 	                			data: null,
 				                className: "dt-center editor-edit",
-				                defaultContent: '<a type="button" class="btn btn-primary"  data-toggle="modal" data-target="#editMemberModal"  onclick="editData(this)"> <span class="glyphicon glyphicon-edit"></span>Edit</a>',
+				                defaultContent: '<a type="button" class="btn btn-primary"  data-toggle="modal" data-target="#editMemberModal"  onclick="editData2(this)"> <span class="glyphicon glyphicon-edit"></span>Edit</a>',
 				                
 				                orderable: false
 	            				},
@@ -136,7 +136,7 @@ function loadUserRegister(Obj)
   padding: 8px 8px 8px 32px;
   text-decoration: none;
   font-size: 15px;
-  color: #818181;
+  color: #fff;
   display: block;
   transition: 0.3s;
 }
@@ -208,9 +208,9 @@ function closeNav() {
 		<button data-toggle="collapse" data-target="#navbarResponsive" class="navbar-toggler navbar-toggler-right" 
 		type="button" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation" style="color:#fff;">
 		<i class="fa fa-align-justify"></i>
+				</button> 
 		
 	</div>
-		</button> 
 		<ul th:each="message : ${sessionMessages}">
 			
 		</ul> 
@@ -230,22 +230,23 @@ function closeNav() {
                     
                 </ul>
           </div>
+                   </nav>
+          
         </div>
-         </nav>
 			<div class="container main_mt">
 			<h5 class="text-center" style="background: #f7f7f7; border-bottom: 2px solid #e3e3e3;  padding: 10px;">User Dashboard</h5>
 			<div style="text-align:left;padding-left: 20px">
-				<a class="editor-create" style="cursor:pointer" onclick="loadUserRegister(this)">+ Create new record</a>
+				<a class="editor-create" style="cursor:pointer" onclick="loadUserRegister(this)">+ Create new User</a>
 			</div>
 			<br>
 		<div class="tabs">
 		
-		<table id="UserGridData_dt" class="display" width="100%">
+		<table id="UserGridData_dt" class="display" >
 		<thead>
 		
                     <tr>
                         <th id="sear">Id</th>
-                        <th id="sear">Username</th>
+                        <th id="sear">User name</th>
 						<th id="sear">Role Name</th>
                         <th id="sear">Created Date</th>
 				        <th id="sear">Created By</th>

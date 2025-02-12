@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
 	<meta charset="ISO-8859-1">
@@ -12,7 +12,7 @@
 	<script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
 	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
 	<script src="js/Department.js"></script>
-	<link rel="stylesheet" href="css/style2.css">do
+	<link rel="stylesheet" href="css/style2.css">
 	<style>
 		body {
 			text-align: center;
@@ -47,7 +47,7 @@
 			padding: 8px 8px 8px 32px;
 			text-decoration: none;
 			font-size: 15px;
-			color: #818181;
+			color: #fff;
 			display: block;
 			transition: 0.3s;
 		}
@@ -107,7 +107,7 @@
 </head>
 
 
-<body onload="InvokeDepartment(this)" ;>
+<body onload="InvokeDepartment(this);" >
 	<div id="mySidenav" class="sidenav">
 		<a></a>
 		<a></a>
@@ -132,9 +132,9 @@
 					class="navbar-toggler navbar-toggler-right" type="button" aria-controls="navbarResponsive"
 					aria-expanded="false" aria-label="Toggle navigation" style="color:#fff;">
 					<i class="fa fa-align-justify"></i>
-
+</button>
 			</div>
-			</button>
+			
 			<ul th:each="message : ${sessionMessages}">
 
 			</ul>
@@ -156,8 +156,9 @@
 
 				</ul>
 			</div>
+			</nav>
 	</div>
-	</nav>
+	
 	<div class="container main_mt">
 		<h5 class="text-center" style="background: #f7f7f7; border-bottom: 2px solid #e3e3e3;  padding: 10px;">
 			Department Dashboard</h5>
@@ -171,16 +172,16 @@
 		</div>
 
 		<!-- File input element -->
-		<div style="text-align:left;padding-left: 20px;">
+		<!-- <div style="text-align:left;padding-left: 20px;">
 			<input type="file" id="fileInput">
 			<a class="Excel-Import" style="cursor:pointer" onclick="importExcelFile2()">+Import excel file</a>
 
-		</div>
+		</div> -->
 
 		<br>
 		<div class="tabs">
 
-			<table id="DepartmentGridData_dt" class="display" width="100%">
+			<table id="DepartmentGridData_dt" class="display" >
 
 				<thead>
 

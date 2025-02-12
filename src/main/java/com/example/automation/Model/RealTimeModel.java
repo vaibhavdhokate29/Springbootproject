@@ -25,12 +25,13 @@ procedureName = "get_Tbl_RealTimeBindData3"
 
 )
 
+
+//procedureName = "get_Tbl_RealTimeBindData",
 @NamedStoredProcedureQuery(
-name = RealTimeModel.NamedQuery_FetchSTartTimeStoreProcedure,	      
-procedureName = "get_Tblrealtimedata"
+name = RealTimeModel.NamedQuery_DashboardByDateStoreProcedure,	      
+procedureName = "get_Tbl_RealtimedataByDate"
 
 )
-
 @NamedStoredProcedureQuery(
 	    name = RealTimeModel.NamedQuery_importBotSelect,
 	    procedureName = "ReturnInputParameters",
@@ -98,6 +99,7 @@ public class RealTimeModel {
 	  public static final String NamedQuery_FetchSTartTimeStoreProcedure = "StoreProcedure";
 	  public static final String NamedQuery_Vaibhav_InserExcel_StoreProcedure = "VaibhavStoreProcedure2";
 	  public static final String NamedQuery_importBotSelect = "importBotStoreProcedure";
+	public static final String NamedQuery_DashboardByDateStoreProcedure = "VaibhavStoreProcedure3";
 
 	@Id
     @GeneratedValue(strategy= GenerationType.IDENTITY) 

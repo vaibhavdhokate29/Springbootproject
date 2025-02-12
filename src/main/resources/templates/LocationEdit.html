@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 
 	<title>Edit Location Details</title>
@@ -1014,19 +1013,22 @@ var _varurl = window.location.host;
 			flex: 1 1 auto;
 			padding: 5px;
 		}
+			
+		.text-center
+
+{
+	border-bottom-color: transparent;
+	background:#eee;
+
+	color: #000;
+}
+		
 	</style>
 
 </head>
 
 <body onload="LoadDataById(this);">
-	<div class="preload">
-
-
-
-
-
-
-		<div class="content">
+<div class="content">
 			<nav class="navbar navbar-expand-lg fixed-top" style="padding: 0px;">
 				<div class="container-fluid">
 					<a class="navbar-brand" th:href="@{${@environment.getProperty('path.loginimage')}}">
@@ -1054,8 +1056,7 @@ var _varurl = window.location.host;
 						<li class="nav-item m10tr" role="presentation"><label><a th:href="@{${@environment.getProperty('path.login')}}"style="color:#fff !important;">
 								<i class="fa fa-sign-out" aria-hidden="true"> Log Out</i>
 							</a>
-									<i class="fa fa-sign-out" aria-hidden="true"></i>
-								</a>
+								
 							</label></li>
 
 					</ul>
@@ -1065,7 +1066,7 @@ var _varurl = window.location.host;
 			<div class="container main_mt">
 
 				<h5 class="text-center" style="background: #f7f7f7; border-bottom: 2px solid #e3e3e3; padding: 10px;">
-					Location Insert Details</h5>
+					Location Edit Details</h5>
 				<br>
 
 
@@ -1075,11 +1076,7 @@ var _varurl = window.location.host;
 
 
 					<div id="tab01" class="tab-contents">
-
-						<p>
-
-
-						<div class="row">
+<div class="row">
 							<div class="col-md-11" style="margin: 0 auto;">
 								<div class="card card-outline-secondary" style="border:0px;">
 									<div class="card-body">
@@ -1104,12 +1101,12 @@ var _varurl = window.location.host;
 									</div><!-- card body -->
 									<div class="form-group row">
 										<div class="col-md-2 col-form-label form-control-label">
-											<input type="Submit" name="btnSubmit" class="btn btn-primary" value="Submit"
+											<input type="Submit" name="btnSubmit" class="btn btn-primary" style="position: absolute; bottom: -30px; right: -90px;" value="Submit"
 												onclick="LocationValuesInsert(this);">
 										</div>
 
 										<div class="col-md-4">
-											<input type="submit" name="btnback" class="btn btn-primary" value="Back"
+											<input type="submit" name="btnback"  style="position: absolute; bottom: -30px; right: -230px;" class="btn btn-primary" value="Back"
 												onclick="Backlist(this);">
 
 										</div>
@@ -1119,7 +1116,6 @@ var _varurl = window.location.host;
 								</div> <!-- card-outline -->
 							</div>
 						</div>
-						</p>
 					</div>
 				</div>
 				<hr>

@@ -2,6 +2,7 @@ package com.example.automation.Controller;
 
 import java.io.IOException;
 
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
@@ -18,10 +19,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -32,7 +30,6 @@ import javax.servlet.http.HttpSession;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,10 +40,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.automation.Model.LocationModel;
 import com.example.automation.Model.LoginModel;
 import com.example.automation.Model.RealTimeModel;
-import com.example.automation.Repository.RealTimeInterface;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @RestController
@@ -75,11 +71,13 @@ public class RealTimeController {
 		return resultList;
 	}
 
+	@SuppressWarnings("unchecked")
 	@PostMapping(path = "/PostGetDashboardGrid", consumes = "application/json", produces = "application/json")
 	public String PostDataGridResponse(@RequestBody String postData) throws Exception {
+
+
 		log.info("Received request to fetch dashboard grid with postData: {}", postData);
 
-		List<String> data1 = new ArrayList<String>();
 		JSONArray ja1 = new JSONArray();
 		try {
 
@@ -132,7 +130,6 @@ public class RealTimeController {
 			procedureQuery.setParameter("pSearch", "");
 			// procedureQuery.setParameter("pSelectedDate",formattedStartTime );
 			procedureQuery.execute();
-			@SuppressWarnings("unchecked")
 			List<Object[]> resultList = procedureQuery.getResultList();
 			for (Object[] r : resultList) {
 				// System.out.print(r[1]);
@@ -174,8 +171,61 @@ public class RealTimeController {
 		}
 		return null;
 	}
+	
+	
+	
+
+	@SuppressWarnings("unchecked")
+	@GetMapping(path = "/GetdashborddateListData", produces = "application/json")
+	public String getlocationString() {
+		JSONArray ja1 = new JSONArray();
+		try {
+
+			EntityManager entityManager = entityManagerFactory.createEntityManager();
+			StoredProcedureQuery procedureQuery = entityManager
+					.createNamedStoredProcedureQuery(RealTimeModel.NamedQuery_DashboardByDateStoreProcedure);
+			procedureQuery.execute();
+			List<Object[]> resultList = procedureQuery.getResultList();
+			for (Object[] r : resultList) {
+				// System.out.print(r[0]);
+				// System.out.print(r[1]);
+				JSONObject obj1 = new JSONObject();
+				obj1.put("ProcessId", r[0]);
+				obj1.put("BotName", r[1]);
+				obj1.put("LocationName", r[2]);
+				obj1.put("DepartmentName", r[3]);
+				obj1.put("Process_Name", r[4]);
+				obj1.put("Status", r[5]);
+				obj1.put("Remarks", r[6]);
+				obj1.put("CreatedBy", r[7]);
+
+				// Check if r[8] is not null before putting it in JSON
+				if (r[8] != null) {
+					// Assuming r[8] is a Date object, you may want to format it
+					// appropriately before adding it to the JSON object
+					// For example, you can convert it to a string in ISO8601 format
+					SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+					String formattedStartTime2 = dateFormat.format(r[8]);
+					obj1.put("StartTime", formattedStartTime2);
+				} else {
+					// Handle the case where r[8] is null
+					obj1.put("StartTime", null);
+				}
+
+				ja1.add(obj1);
+			}
+
+			return ja1.toString();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		return null;
+	}
 
 	// -- 20 feb 2024 Vaibhav--/
+	@SuppressWarnings("unchecked")
 	@GetMapping(path = "/PostGetDashboardGridToExcel2", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 	public void postDashboardGridToExcel2(HttpServletResponse response) throws IOException, Exception {
 		log.info("Received request to export dashboard grid to Excel.");
@@ -187,14 +237,11 @@ public class RealTimeController {
 			response.setHeader("Content-Disposition", "attachment; filename=DashboardData.xlsx");
 
 			// Populate the workbook with data
-			List<String> data = new ArrayList<String>();
 			JSONArray ja1 = new JSONArray();
-			ObjectMapper mapper = new ObjectMapper();
 			EntityManager entityManager = entityManagerFactory.createEntityManager();
 			StoredProcedureQuery procedureQuery = entityManager
 					.createNamedStoredProcedureQuery(RealTimeModel.NamedQuery_VaibhavStoreProcedure);
 			procedureQuery.execute();
-			@SuppressWarnings("unchecked")
 			List<Object[]> resultList = procedureQuery.getResultList();
 			for (Object[] r : resultList) {
 				JSONObject obj1 = new JSONObject();
@@ -254,12 +301,12 @@ public class RealTimeController {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@PostMapping("/importExcel")
 	public String importExcel(@RequestParam("DashboardData") MultipartFile file, @RequestParam String botName,
 			HttpServletRequest request) {
 
 //JSONObject BotInfo=new JSONObject(botInfo);
-		JSONObject ob = new JSONObject();
 		JSONArray ja1 = new JSONArray();
 
 
@@ -482,6 +529,8 @@ public class RealTimeController {
 		}
 
 	}
+	
+	
 
 	// Helper methods to get cell values safely
 	private int getIntCellValue(Cell cell) {
@@ -522,6 +571,7 @@ public class RealTimeController {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@PostMapping(path = "/PostGetDashboardGridSearch", consumes = "application/json", produces = "application/json")
 	public String PostDataGridSearchResponse(@RequestBody String postData) throws Exception {
 		log.info("Received request to fetch dashboard grid with search data: {}", postData);
@@ -602,7 +652,6 @@ public class RealTimeController {
 	// For Login(PostMethhod)
 	@PostMapping(path = "/PostGetLoginData", consumes = "application/json", produces = "application/json")
 	public String PostDataLoginResponse(@RequestBody String postData) throws Exception {
-		List<String> data1 = new ArrayList<String>();
 		JSONArray ja1 = new JSONArray();
 		try {
 			// System.out.println(postData);
@@ -656,12 +705,12 @@ public class RealTimeController {
 	}
 
 	// Khalid
+	@SuppressWarnings("unchecked")
 	// For Login(PostMethhod)
 	@PostMapping(path = "/PostGetLoginData1", consumes = "application/json", produces = "application/json")
 	public String PostDataLoginResponse1(@RequestBody String postData, HttpServletRequest request) throws Exception {
 		log.info("Received login request with data: {}", postData);
 
-		List<String> data1 = new ArrayList<String>();
 		JSONArray ja1 = new JSONArray();
 		try {
 			// System.out.println(postData);

@@ -46,6 +46,7 @@ function validateLogin(event) {
             if (resultB[0].NotFound === "Found") {
                 window.sessionStorage.setItem('sessionname', resultB[0].Name);
                 window.sessionStorage.setItem('sessionRoleId', resultB[0].role_Id);
+           //  alert( resultB[0].role_Id);
                 window.location.href = "http://" + _varurl + "/Dashboard";
             } else {
                 alert(resultB[0].NotFound);

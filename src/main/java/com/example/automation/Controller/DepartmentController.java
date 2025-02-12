@@ -83,8 +83,6 @@ public class DepartmentController {
 	public String PostDataChartResponse(@RequestBody String postData) throws Exception {
 		// System.out.print(postData);
 
-		List<String> data1 = new ArrayList<String>();
-		JSONArray ja1 = new JSONArray();
 
 		try {
 			/*
@@ -253,10 +251,9 @@ public class DepartmentController {
 //for update   
 	@PostMapping(path = "/PostUpdateDepartmentData", consumes = "application/json", produces = "application/json")
 	public String UpdateDataChartResponse(@RequestBody String postData) throws Exception {
+
 		// System.out.print(postData);
 
-		List<String> data1 = new ArrayList<String>();
-		JSONArray ja1 = new JSONArray();
 
 		try {
 			// System.out.print(postData);
@@ -313,17 +310,15 @@ public class DepartmentController {
 
 // Comment post method end
 
+	@SuppressWarnings("unchecked")
 	@GetMapping(path = "/GetDepartmentListData", produces = "application/json")
 	public String getdepartmetString() {
-		List<String> data = new ArrayList<String>();
 		JSONArray ja1 = new JSONArray();
-		ObjectMapper mapper = new ObjectMapper();
 		try {
 			EntityManager entityManager = entityManagerFactory.createEntityManager();
 			StoredProcedureQuery procedureQuery = entityManager
 					.createNamedStoredProcedureQuery(DepartmentModel.NamedQuery_DepartmentListStoreProcedure);
 			procedureQuery.execute();
-			@SuppressWarnings("unchecked")
 			List<Object[]> resultList = procedureQuery.getResultList();
 			for (Object[] r : resultList) {
 				// System.out.print(r[0]);
@@ -352,6 +347,7 @@ public class DepartmentController {
 	}
 
 //-- 20 feb 2024 Vaibhav--/
+	@SuppressWarnings("unchecked")
 	@GetMapping(path = "/excel/export2", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 	public void exportToExcel2(HttpServletResponse response) throws IOException, Exception {
 		try (Workbook workbook = new XSSFWorkbook()) {
@@ -361,15 +357,12 @@ public class DepartmentController {
 			response.setHeader("Content-Disposition", "attachment; filename=DepartmentData.xlsx");
 
 			// Populate the workbook with data
-			List<String> data = new ArrayList<String>();
 			JSONArray ja2 = new JSONArray();
-			ObjectMapper mapper = new ObjectMapper();
 			try {
 				EntityManager entityManager = entityManagerFactory.createEntityManager();
 				StoredProcedureQuery procedureQuery = entityManager
 						.createNamedStoredProcedureQuery(DepartmentModel.NamedQuery_DepartmentListStoreProcedure);
 				procedureQuery.execute();
-				@SuppressWarnings("unchecked")
 				List<Object[]> resultList = procedureQuery.getResultList();
 				for (Object[] r : resultList) {
 					JSONObject obj1 = new JSONObject();
@@ -429,8 +422,6 @@ public class DepartmentController {
 	public String PostDeleteDepartmentData1(@RequestBody String postData) throws Exception {
 		// System.out.print(postData);
 
-		List<String> data1 = new ArrayList<String>();
-		JSONArray ja1 = new JSONArray();
 		try {
 
 			// System.out.print(postData);
@@ -460,11 +451,9 @@ public class DepartmentController {
 	}
 
 	@PostMapping(path = "/lPostEditDepartmentData", consumes = "application/json", produces = "application/json")
-	public Object lPostEditDepartmentData1(@RequestBody String postData, HttpResponse response) throws Exception {
+	public Object lPostEditDepartmentData1(@RequestBody String postData, @SuppressWarnings("rawtypes") HttpResponse response) throws Exception {
 		// System.out.print(postData);
 
-		List<String> data1 = new ArrayList<String>();
-		JSONArray ja1 = new JSONArray();
 		String[] arrOfStr = postData.split(":");
 		String DepartmentId = "" + "'" + arrOfStr[1].toString() + "'";
 		DepartmentId = DepartmentId.replace("}", "").replace("\"", "").replace("'", "");

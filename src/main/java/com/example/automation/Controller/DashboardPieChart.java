@@ -30,13 +30,13 @@ public class DashboardPieChart {
 	
 	
 	
+	@SuppressWarnings("unchecked")
 	@PostMapping(path = "/PostGetDashboard", consumes = "application/json", produces = "application/json")
 	public String JenkinsJsonResponse1(			
 			@RequestBody String postData) throws Exception {
 		
 		  log.info("PostGetDashboard API called with data: {}", postData);
 
-			List<String> data1 = new ArrayList<String>();
 			JSONArray ja1 = new JSONArray();			
 			try {			
 				String[] arrOfStr = postData.split(",");
@@ -67,6 +67,7 @@ public class DashboardPieChart {
 	
 	//Chart Data with Input Parameter of LocationId, DepartmentId and BotId invoke from Onchange event
 	
+	@SuppressWarnings("unchecked")
 	@PostMapping(path = "/PostGetDashboardChart", consumes = "application/json", produces = "application/json")
 	public  String PostDataChartResponse(			
 			@RequestBody String postData) throws Exception {
@@ -131,3 +132,4 @@ public class DashboardPieChart {
 	}
 	
 }
+

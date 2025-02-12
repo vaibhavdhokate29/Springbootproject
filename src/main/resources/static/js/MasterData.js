@@ -163,10 +163,12 @@ function InvokeMethod(Obj) {
 	console.log("inside invoke");
 	var _varname = window.sessionStorage.getItem('sessionname');
 	var _roleId = window.sessionStorage.getItem('sessionRoleId');
-
-	/*if (_roleId === '1' || _roleId == 1) {
+console.log(_roleId);
+console.log(_roleId);
+	if (_roleId === '1' || _roleId == 1) {
 		document.getElementById("checkMasters").style.display = 'none';
-	}*/
+		
+	}
 	//alert(_varname);
 	document.getElementById("SpnSession").innerHTML = _varname;
 	$.ajax({
@@ -187,7 +189,7 @@ function InvokeMethod(Obj) {
 				//alert(result[i].LocationId);
 				//alert(result[i].LocationName);
 
-				$('#idLocation').append('<option value="' + result[i].LocationId + '">' + result[i].LocationName + '</option>');
+				$('#idLocation').append('<option value="' +  result[i].LocationId + '">' + result[i].LocationName + '</option>');
 			}
 			DepartmentData(); //call
 			//	RealTimeData("1"); //call
@@ -210,7 +212,7 @@ function DashboardCreation(obj) {
 
 
 	// Clear the container where the chart is displayed
-	document.getElementById("pieChart11").innerHTML = "";
+	
 
 	var _varlocationid = document.getElementById("idLocation").value;
 	var _vardepartmentId = document.getElementById("idDepartmant").value;
@@ -234,10 +236,8 @@ function DashboardCreation(obj) {
 		//timeout: 60000,
 		success: function(data, textStatus, jqXHR) {
 
-
+			document.getElementById("pieChart11").innerHTML = "";
 			// alert('Success!');
-
-
 
 			var _total = data[0].total_Bot_count; /* 20 feb 2024 line chart */
 			console.log("Total====" + _total);
@@ -570,7 +570,7 @@ function DashboardCreation(obj) {
 				}
 
 			});
-
+		//	gettablebydate();
 			DashboardGridCreation(1); // Code for Chart End
 
 
@@ -1144,82 +1144,145 @@ function Countdown(obj) {
 /*condition for charts end*/
 
 
-
 function DashboardGridCreation(Obj) {
+    var _varurl = window.location.host;
+    var _varlocationid = document.getElementById("idLocation").value;
+    var _vardepartmentId = document.getElementById("idDepartmant").value;
+    var _varBotId = document.getElementById("idBotName").value;
 
-	//alert("Bind Grid");
+    var postData = {
+        "LocationId": _varlocationid,
+        "DepartmentId": _vardepartmentId,
+        "BotId": _varBotId
+    };
 
-	//GridData_dt.attribute("display"," ");
-	var _varlocationid = document.getElementById("idLocation").value;
-	//alert("Location :-" + _varlocationid);
-	var _vardepartmentId = document.getElementById("idDepartmant").value;
-	//alert("Department" +_vardepartmentId);
-	var _varBotId = document.getElementById("idBotName").value;
+    $.ajax({
+        url: "http://" + _varurl + "/RealTimeDataValues/PostGetDashboardGrid",
+        type: "POST",
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        data: JSON.stringify(postData),
+        success: function(resultB) {
+            console.log("table", resultB);
+            if (resultB && resultB.length > 0) {
+                
+                // Destroy existing DataTable if it exists
+                if ($.fn.DataTable.isDataTable('#GridData_dt')) {
+                    $('#GridData_dt').DataTable().destroy();
+                }
 
-	//var selectedDate = document.getElementById("Test_DatetimeLocal").value;
-	//alert("Bot" + _varBotId);
-	var postData = _varlocationid + ',' + _vardepartmentId + ',' + _varBotId;
+                // Initialize the DataTable
+                var table = $('#GridData_dt').DataTable({
+                    data: resultB,
+                    columns: [
+                        { data: 'ProcessId' },
+                        { data: 'BotName' },
+                        { data: 'LocationName' },
+                        { data: 'DepartmentName' },
+                        { data: 'Process_Name' },
+                        { data: 'Status' },
+                        { data: 'Remarks' },
+                        { data: 'CreatedBy' },
+                        { data: 'StartTime' },
+                    ],
+                });
+
+                // Store the table instance globally for use in filterByDate
+                window.table = table;
+
+                // Optionally, filter by date immediately after loading
+                filterByDate();
+            } else {
+                console.log("No data received or empty result set");
+
+                if ($.fn.DataTable.isDataTable('#GridData_dt')) {
+                    $('#GridData_dt').DataTable().clear().draw();
+                }
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            alert("Error: " + errorThrown);
+            console.error("Request failed: " + jqXHR.status + ' ' + jqXHR.responseText);
+        }
+    });
+}
 
 
+function gettablebydate() {
+    var _varurl = window.location.host;
 
-	var postData = {
-		"LocationId": _varlocationid,
-		"DepartmentId": _vardepartmentId,
-		"BotId": _varBotId,
-		//	"SelectedDate": selectedDate
-	}
-	//alert(postData);
-	$.ajax({
-		url: "http://" + _varurl + "/RealTimeDataValues/PostGetDashboardGrid",
-		type: "POST",
-		contentType: 'application/json; charset=utf-8',
-		dataType: 'json',
-		data: JSON.stringify(postData),
+    $.ajax({
+        url: "http://" + _varurl + "/RealTimeDataValues/GetdashborddateListData",
+        type: "GET",
+    	dataType: 'json',
+		async: true,
 		success: function(resultB) {
-			// Check if the result is valid
-			console.log("table", resultB);
-			if (resultB && resultB.length > 0) {
-				// Destroy existing DataTable if it exists
-				var existingDataTable = $('#GridData_dt').DataTable();
-				if (existingDataTable !== undefined) {
-					existingDataTable.destroy();
-				}
+            
+            // Check if the result is valid
+            console.log("table", resultB);
+            if (resultB && resultB.length > 0) {
+                
+                // Destroy existing DataTable if it exists
+                if ($.fn.DataTable.isDataTable('#GridData_dt')) {
+                    $('#GridData_dt').DataTable().destroy();
+                }
 
-				// DataTable Code
-				$('#GridData_dt').DataTable({
-					data: resultB,
-					columns: [
-						{ data: 'ProcessId' },
-						{ data: 'BotName' },
-						{ data: 'LocationName' },
-						{ data: 'DepartmentName' },
-						{ data: 'Process_Name' },
-						{ data: 'Status' },
-						{ data: 'Remarks' },
-						{ data: 'CreatedBy' },
-						{ data: 'StartTime' },
-					],
-				});
-			} else {
-				// No data returned from the stored procedure
-				// You can display a message or handle it as needed
-				// For example, clear the existing DataTable
-				var existingDataTable = $('#GridData_dt').DataTable();
-				if (existingDataTable !== undefined) {
-					existingDataTable.clear().draw();
-				}
-				// Display a message to the user
-				// For example:
-				// $('#GridData_dt').html('<p>No data available for the selected criteria.</p>');
+                // Initialize the DataTable
+                var table = $('#GridData_dt').DataTable({
+                    data: resultB,
+                    columns: [
+                        { data: 'ProcessId' },
+                        { data: 'BotName' },
+                        { data: 'LocationName' },
+                        { data: 'DepartmentName' },
+                        { data: 'Process_Name' },
+                        { data: 'Status' },
+                        { data: 'Remarks' },
+                        { data: 'CreatedBy' },
+                        { data: 'StartTime' },
+                    ],
+                });
 
-			}
-			//	RealTimeData();
-		},
-		error: function(jqXHR, textStatus, errorThrown) {
-			alert(errorThrown);
-			alert(jqXHR.status + ' ' + jqXHR.responseText);
-		}
-	});
+                // Attach the table instance to the global scope so it can be used in filterByDate
+                window.table = table;
+
+                // Optionally, filter by date immediately after loading
+                filterByDate();
+            } else {
+                console.log("No data received or empty result set");
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            alert("Error: " + errorThrown);
+            console.error("Request failed: " + jqXHR.status + ' ' + jqXHR.responseText);
+        }
+    });
+}
+function filterByDate() {
+	
+
+	var tbl = $('#GridData_dt').DataTable();
+	tbl.draw();
+    var startDate = $('#startDate').val(); // Get selected date
+
+    // Ensure startDate is set and not empty
+    if (startDate) {
+        var selectedDate = new Date(startDate).setHours(0, 0, 0, 0); // Set time to midnight for accurate comparison
+
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            var dateStr = data[8]; // Assuming the date is in the 9th column (index 8)
+            var rowDate = new Date(dateStr).setHours(0, 0, 0, 0); // Set time to midnight for accurate comparison
+
+            // Return true if the row date matches the selected date
+            return rowDate === selectedDate;
+        });
+
+        // Redraw the table with the applied filter
+        window.table.draw();
+
+        // Remove the filter after it's applied
+        $.fn.dataTable.ext.search.pop();
+    }
 }
 
 /*

@@ -1,4 +1,4 @@
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 
 <title>Edit Bot</title>
@@ -81,7 +81,7 @@ function GetEditData(id){
 		        success: function(resultB) {        	
 				//alert("ASP Priyankan ne Code copy kiya. Bhagwan ne rakshas KHalid ko bheja hai.");
 				//alert(resultB[0].BotId);
-			//	alert(resultB[0].BotName);
+			//	alert(resultB);
 				//alert(resultB[0].LocationId);
 				//alert(resultB[0].DepartmentId);
 				//alert(resultB[0].IsActive);
@@ -1270,11 +1270,6 @@ a {
 </head>
 <body onload="LoadDataById(this);">
 
-<div class="preload">
-
-  </div>
-   </div>
-
 <!-- preloader -->
   <!--    <div id="preloader">
         <div class="preloader">
@@ -1288,15 +1283,16 @@ a {
 <div class="content">
 	<nav class="navbar navbar-expand-lg fixed-top" style="padding: 0px;">
 			<div class="container-fluid">
-				<a class="navbar-brand" href="#">
-					<img src="http://localhost:9082/img/logo2.jpg" class="img-fluid" width="140px" height="120px">
-				</a>
+				<a class="navbar-brand" th:href="@{${@environment.getProperty('path.loginimage')}}">
+    <img th:src="${@environment.getProperty('path.loginimage')}" class="img-fluid" width="140px" height="120px">
+</a>
 				<button data-toggle="collapse" data-target="#navbarResponsive"
 					class="navbar-toggler navbar-toggler-right" type="button" aria-controls="navbarResponsive"
 					aria-expanded="false" aria-label="Toggle navigation" style="color:#fff;">
 					<i class="fa fa-align-justify"></i>
+								</button>
+					
 			</div>
-			</button>
 
 			<div class="collapse navbar-collapse" id="navbarResponsive" style="color: #fff;">
 				<ul class="nav navbar-nav ml-auto">
@@ -1326,10 +1322,7 @@ a {
 
   
   <div id="tab01" class="tab-contents">
-    
-    <p>
-	
-	
+
 	<div class="row">
                         <div class="col-md-11" style="margin: 0 auto;">
                             <div class="card card-outline-secondary" style="border:0px;">
@@ -1362,10 +1355,10 @@ a {
 											 </div>
 											 
                                              <div class="col-md-4">  
-	                                            <input type="Submit" name="btnSubmit" class="btn btn-primary" value="Submit" onclick="BotValuesEdit(this);">
+	                                            <input type="Submit" name="btnSubmit"  style="position: absolute; bottom: -70px; right: -70px;" class="btn btn-primary" value="Submit" onclick="BotValuesEdit(this);">
 											 </div>
 											 <div class="col-md-4">  
-	                                            <input type="submit" name="btnback" class="btn btn-primary" value="Back" onclick="BackBotlist(this);">
+	                                            <input type="submit" name="btnback" style="position: absolute; bottom: -70px; right: -170px;" class="btn btn-primary" value="Back" onclick="BackBotlist(this);">
 											 </div>
                                         </div>
                                 </div><!-- card body -->
@@ -1373,8 +1366,8 @@ a {
                             </div> <!-- card-outline -->
                         </div>
                     </div>
-                   </p>
   </div>
+  
 </div>
 			<hr>
 			

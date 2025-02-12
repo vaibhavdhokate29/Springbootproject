@@ -1,8 +1,6 @@
 package com.example.automation.Controller;
 
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -26,428 +24,345 @@ import com.example.automation.Model.BotNameModel;
 import com.example.automation.Model.DepartmentModel;
 import com.example.automation.Model.LocationModel;
 import com.example.automation.Model.LoginModel;
-import com.example.automation.Model.RealTimeModel;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 @RestController
-public class MasterController {	
-	
-    private static final Logger log = LogManager.getLogger(MasterController.class);
+public class MasterController {
 
-		private static EntityManagerFactory entityManagerFactory =
-		          Persistence.createEntityManagerFactory("automation");
-		
-		
-		@RequestMapping(value="/GetLocationProc" , method= RequestMethod.GET)
-		public List<LocationModel> getLocation()
-	    { log.info("GetLocationProc API called");
-	    	EntityManager entityManager = entityManagerFactory.createEntityManager();
-		      StoredProcedureQuery procedureQuery =
-		              entityManager.createNamedStoredProcedureQuery(LocationModel.NamedQuery_LOCATIONStoreProcedure);		      
-		      procedureQuery.execute(); 
-		      //@SuppressWarnings("unchecked")
-		      List<LocationModel> resultList = procedureQuery.getResultList();
-			return resultList;
+	private static final Logger log = LogManager.getLogger(MasterController.class);
+
+	private static EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("automation");
+
+	@RequestMapping(value = "/GetLocationProc", method = RequestMethod.GET)
+	public List<LocationModel> getLocation() {
+		log.info("GetLocationProc API called");
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		StoredProcedureQuery procedureQuery = entityManager
+				.createNamedStoredProcedureQuery(LocationModel.NamedQuery_LOCATIONStoreProcedure);
+		procedureQuery.execute();
+		// @SuppressWarnings("unchecked")
+		@SuppressWarnings("unchecked")
+		List<LocationModel> resultList = procedureQuery.getResultList();
+		return resultList;
+	}
+
+	@SuppressWarnings("unchecked")
+	@PostMapping(path = "/GetDurationTime", consumes = "application/json", produces = "application/json")
+
+	public String getDurationTimeString(@RequestBody String postData) throws Exception {
+		log.info("GetDurationTime API called with data: {}", postData);
+		JSONArray ja1 = new JSONArray();
+		try {
+
+			String[] arrOfStr = postData.split(",");
+
+			String BotName = "" + "'" + arrOfStr[0].toString() + "'";
+
+			BotName = BotName.replace("{", "").replace("\"", "").replace("'", "");
+
+			BotName = BotName.replace("}", "").replace("\"", "").replace("'", "");
+			System.out.println(BotName);
+			EntityManager entityManager = entityManagerFactory.createEntityManager();
+			StoredProcedureQuery procedureQuery = entityManager
+					.createNamedStoredProcedureQuery(BotNameModel.NamedQuery_BotDurationStoreProcedure_BotNameModel);
+			entityManager.getTransaction().begin();
+
+			procedureQuery.setParameter("Botname", BotName);
+
+			procedureQuery.execute();
+			List<Object[]> resultList = procedureQuery.getResultList();
+			for (Object[] r : resultList) {
+				// System.out.print(r[0]);
+				// System.out.print(r[1]);
+				JSONObject obj1 = new JSONObject();
+				obj1.put("ProcessId", r[0]);
+				obj1.put("Duration", r[1]);
+				obj1.put("BotName", r[2]);
+				ja1.add(obj1);
+
+			}
+
+			// return resultList;
+			return ja1.toString();
+			// return "Developer";
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
 		}
-		@GetMapping(path = "/GetStartTime", produces = "application/json")
-		public String getStartTimeString()
-	    {
-			 log.info("GetStartTime API called");
-			List<String> data = new ArrayList<String>();
-			JSONArray ja1 = new JSONArray();
-			ObjectMapper mapper = new ObjectMapper();
-			try {
-				
-				EntityManager entityManager = entityManagerFactory.createEntityManager();
-			      StoredProcedureQuery procedureQuery =
-			              entityManager.createNamedStoredProcedureQuery(RealTimeModel.NamedQuery_FetchSTartTimeStoreProcedure);		      
-			      procedureQuery.execute(); 
-			      @SuppressWarnings("unchecked")
-			      List<Object[]> resultList = procedureQuery.getResultList();
-			      for (Object[] r : resultList) {
-			    	 // System.out.print(r[0]);
-			    	//  System.out.print(r[1]);
-			    	  JSONObject obj1 = new JSONObject();
-					  obj1.put("ProcessId",r[0]);
-					  if (r[1] != null) {
-					        // Assuming r[8] is a Date object, you may want to format it
-					        // appropriately before adding it to the JSON object
-					        // For example, you can convert it to a string in ISO8601 format
-					        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-					        String formattedStartTime2 = dateFormat.format(r[1]);
-					        obj1.put("StartTime", formattedStartTime2);
-					    } else {
-					        // Handle the case where r[8] is null
-					        obj1.put("StartTime", null);
-					    }				
-					  ja1.add(obj1); 
-			      
-			      }
-			     
-				//return resultList;
-			     return ja1.toString();
-			     // return "Developer";
-			
+
+		return null;
+	}
+
+	  @SuppressWarnings("unchecked")
+	    @GetMapping(path = "/GetLocationlist", produces = "application/json")
+	    public String getLocationString() {
+	        log.info("GetLocationlist API called");
+	        EntityManager entityManager = null;
+	        JSONArray ja1 = new JSONArray();
+
+	        try {
+	            entityManager = entityManagerFactory.createEntityManager();
+	            StoredProcedureQuery procedureQuery = entityManager
+	                    .createNamedStoredProcedureQuery(LocationModel.NamedQuery_LOCATIONStoreProcedure);
+	            procedureQuery.execute();
+	            List<Object[]> resultList = procedureQuery.getResultList();
+
+	            for (Object[] r : resultList) {
+	                JSONObject obj1 = new JSONObject();
+	                obj1.put("LocationId", r[0]);
+	                obj1.put("LocationName", r[1]);
+	                ja1.add(obj1);
+	            }
+
+	            return ja1.toString();
+
+	        } catch (Exception e) {
+	            log.error("Error fetching location list", e);
+	            return "{\"error\": \"Internal Server Error\"}";
+
+	        } finally {
+	            if (entityManager != null && entityManager.isOpen()) {
+	                entityManager.close();
+	            }
+	        }}
+
+	@SuppressWarnings("unchecked")
+	@GetMapping(path = "/GetDepartmentlist", produces = "application/json")
+	public String getDepartmentString() {
+		log.info("GetDepartmentlist API called");
+		EntityManager entityManager = null;
+
+		JSONArray ja1 = new JSONArray();
+		try {
+			entityManager = entityManagerFactory.createEntityManager();
+			StoredProcedureQuery procedureQuery = entityManager
+					.createNamedStoredProcedureQuery(DepartmentModel.NamedQuery_DepartmentNameStoreProcedure);
+			procedureQuery.execute();
+			List<Object[]> resultList = procedureQuery.getResultList();
+			for (Object[] r : resultList) {
+				// System.out.print(r[0]);
+				// System.out.print(r[1]);
+				JSONObject obj1 = new JSONObject();
+				obj1.put("DepartmentId", r[0]);
+				obj1.put("DepartmentName", r[1]);
+				ja1.add(obj1);
+
 			}
-			catch (Exception e) {
-				e.printStackTrace();
-				
-			}
-			
-			return null;
-		}
-		
-		
-		@PostMapping(path = "/GetDurationTime", consumes = "application/json", produces = "application/json")
-		
-		public String getDurationTimeString(@RequestBody String postData) throws Exception
-	    {
-			log.info("GetDurationTime API called with data: {}", postData);
-			List<String> data = new ArrayList<String>();
-			JSONArray ja1 = new JSONArray();
-			ObjectMapper mapper = new ObjectMapper();
-			try {
 
-				String[] arrOfStr = postData.split(",");
+			// return resultList;
+			return ja1.toString();
+			// return "Developer";
 
-					String BotName = "" + "'" + arrOfStr[0].toString() + "'";
-					
-					BotName = BotName.replace("{", "").replace("\"", "").replace("'", "");
-					String[] arrOfUStr = BotName.split(":");
-					
-					BotName = BotName.replace("}", "").replace("\"", "").replace("'", "");
-					 System.out.println(BotName);
-				EntityManager entityManager = entityManagerFactory.createEntityManager();
-			      StoredProcedureQuery procedureQuery =
-			              entityManager.createNamedStoredProcedureQuery(BotNameModel.NamedQuery_BotDurationStoreProcedure_BotNameModel);
-	entityManager.getTransaction().begin();
-				
-				procedureQuery.setParameter("Botname", BotName);
+		} catch (Exception e) {
+			  log.error("Error fetching Department list", e);
+	            return "{\"error\": \"Internal Server Error\"}";
 
-			      procedureQuery.execute(); 
-			      @SuppressWarnings("unchecked")
-			      List<Object[]> resultList = procedureQuery.getResultList();
-			      for (Object[] r : resultList) {
-			    	 // System.out.print(r[0]);
-			    	//  System.out.print(r[1]);
-			    	  JSONObject obj1 = new JSONObject();
-					  obj1.put("ProcessId",r[0]);
-					  obj1.put("Duration",r[1]);
-					  obj1.put("BotName",r[2]);
-					  ja1.add(obj1); 
-			      
-			      }
-			     
-				//return resultList;
-			     return ja1.toString();
-			     // return "Developer";
-			
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				
-			}
-			
-			return null;
-		}
-		@GetMapping(path = "/GetLocationlist", produces = "application/json")
-		public String getLocationString()
-	    {
-			log.info("GetLocationlist API called");
-			List<String> data = new ArrayList<String>();
-			JSONArray ja1 = new JSONArray();
-			ObjectMapper mapper = new ObjectMapper();
-			try {
-				EntityManager entityManager = entityManagerFactory.createEntityManager();
-			      StoredProcedureQuery procedureQuery =
-			              entityManager.createNamedStoredProcedureQuery(LocationModel.NamedQuery_LOCATIONStoreProcedure);		      
-			      procedureQuery.execute(); 
-			      @SuppressWarnings("unchecked")
-			      List<Object[]> resultList = procedureQuery.getResultList();
-			      for (Object[] r : resultList) {
-			    	 // System.out.print(r[0]);
-			    	//  System.out.print(r[1]);
-			    	  JSONObject obj1 = new JSONObject();
-					  obj1.put("LocationId",r[0]);
-					  obj1.put("LocationName",r[1]);					
-					  ja1.add(obj1); 
-			      
-			      }
-			     
-				//return resultList;
-			     return ja1.toString();
-			     // return "Developer";
-			
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				
-			}
-			
-			return null;
-		}
-	
-		
-		@GetMapping(path = "/GetDepartmentlist", produces = "application/json")
-		public String getDepartmentString()
-	    {
-		    log.info("GetDepartmentlist API called");
-
-			List<String> data = new ArrayList<String>();
-			JSONArray ja1 = new JSONArray();
-			ObjectMapper mapper = new ObjectMapper();
-			try {
-				EntityManager entityManager = entityManagerFactory.createEntityManager();
-			      StoredProcedureQuery procedureQuery =
-			              entityManager.createNamedStoredProcedureQuery(DepartmentModel.NamedQuery_DepartmentNameStoreProcedure);		      
-			      procedureQuery.execute(); 
-			      @SuppressWarnings("unchecked")
-			      List<Object[]> resultList = procedureQuery.getResultList();
-			      for (Object[] r : resultList) {
-			    	  //System.out.print(r[0]);
-			    	 // System.out.print(r[1]);
-			    	  JSONObject obj1 = new JSONObject();
-					  obj1.put("DepartmentId",r[0]);
-					  obj1.put("DepartmentName",r[1]);					
-					  ja1.add(obj1); 
-			      
-			      }
-			     
-				//return resultList;
-			     return ja1.toString();
-			     // return "Developer";
-			
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				
-			}
-			
-			return null;	
-		}
-		
-	
-		
-		@GetMapping(path = "/GetBotNamelist", produces = "application/json")
-		public String getBotNameString()
-	    {
-		    log.info("GetBotNamelist API called");
-
-			List<String> data = new ArrayList<String>();
-			JSONArray ja1 = new JSONArray();
-			ObjectMapper mapper = new ObjectMapper();
-			try {
-				EntityManager entityManager = entityManagerFactory.createEntityManager();
-			      StoredProcedureQuery procedureQuery =
-			              entityManager.createNamedStoredProcedureQuery(BotNameModel.NamedQuery_BotNameStoreProcedure_BotNameModel);		      
-			      procedureQuery.execute(); 
-			      @SuppressWarnings("unchecked")
-			      List<Object[]> resultList = procedureQuery.getResultList();
-			      for (Object[] r : resultList) {
-			    	//  System.out.print(r[0]);
-			    	//  System.out.print(r[1]);
-			    	  JSONObject obj1 = new JSONObject();
-					  obj1.put("BotId",r[0]);
-					  obj1.put("BotName",r[1]);	
-					  
-					  ja1.add(obj1); 
-			      
-			      }
-			     
-				//return resultList;
-			     return ja1.toString();
-			     // return "Developer";
-			
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				
-			}
-		
-			return null;	
-		}
-		
-		
-	
-		//added by kiran
-		@GetMapping(path = "/GetRoleList", produces = "application/json")
-		public String getRoleString()
-	    {
-		    log.info("GetRoleList API called");
-
-			List<String> data = new ArrayList<String>();
-			JSONArray ja1 = new JSONArray();
-			ObjectMapper mapper = new ObjectMapper();
-			try {
-				EntityManager entityManager = entityManagerFactory.createEntityManager();
-			      StoredProcedureQuery procedureQuery =
-			              entityManager.createNamedStoredProcedureQuery(LoginModel.NamedQuery_RoleStoreProcedure);		      
-			      procedureQuery.execute(); 
-			      @SuppressWarnings("unchecked")
-			      List<Object[]> resultList = procedureQuery.getResultList();
-			      for (Object[] r : resultList) {
-			    	 // System.out.print(r[0]);
-			    	//  System.out.print(r[1]);
-			    	  JSONObject obj1 = new JSONObject();
-					  obj1.put("role_id",r[0]);
-					  obj1.put("name",r[1]);					
-					  ja1.add(obj1);  
-			      
-			      }
-			     
-				//return resultList;
-			     return ja1.toString();
-			     // return "Developer";
-			
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				
-			}
-			
-			return null;
-		}
-	
-		//added by kiran
-		@PostMapping(path = "/register", consumes = "application/json", produces = "application/json")
-		public String registerData(@RequestBody String postData) throws Exception {
-		    log.info("register API called with data: {}", postData);
-
-			List<String> data1 = new ArrayList<String>();
-			JSONArray ja1 = new JSONArray();
-			try {
-
-				String[] arrOfStr = postData.split(",");
-				System.out.println("arrOfStr:::::"+arrOfStr[4].toString());
-				String id = "" + "'" + arrOfStr[0].toString() + "'";
-				id = id.replace("{", "").replace("\"", "").replace("'", "");
-				String[] arrOfIStr = id.split(":");
-				id = "" + "'" + arrOfIStr[1].toString() + "'";
-				id = id.replace("{", "").replace("\"", "").replace("'", "");
-
-
-				String username = "" + "'" + arrOfStr[1].toString() + "'";
-				username = username.replace("{", "").replace("\"", "").replace("'", "");
-				String[] arrOfUStr = username.split(":");
-				username = "" + "'" + arrOfUStr[1].toString() + "'";
-				username = username.replace("{", "").replace("\"", "").replace("'", "");
-				 System.out.println(username);
-
-				String password = "" + "'" + arrOfStr[2].toString() + "'";
-				password = password.replace("{", "").replace("\"", "").replace("'", "");
-				String[] arrOfPStr = password.split(":");
-				password = "" + "'" + arrOfPStr[1].toString() + "'";
-				password = password.replace("{", "").replace("\"", "").replace("'", "");
-				// System.out.print(Integer.parseInt(password));
-				 System.out.println(password + "password");
-				 
-				 String retry_pass = "" + "'" + arrOfStr[3].toString() + "'";
-				 retry_pass = retry_pass.replace("{", "").replace("\"", "").replace("'", "");
-				 String[] arrOfAStr = retry_pass.split(":");
-				 retry_pass = "" + "'" + arrOfAStr[1].toString() + "'";
-				 retry_pass = retry_pass.replace("{", "").replace("\"", "").replace("'", "");
-				 // System.out.print(Integer.parseInt(retry_pass));
-				 System.out.println(retry_pass + "retry_pass");
-
-				String role_id = "" + "'" + arrOfStr[4].toString() + "'";
-				role_id = role_id.replace("}", "").replace("\"", "").replace("'", "");
-				String[] arrOfRStr = role_id.split(":");
-				role_id = "" + "'" + arrOfRStr[1].toString() + "'";
-				role_id = role_id.replace("}", "").replace("\"", "").replace("'", "");
-				// System.out.print(Integer.parseInt(role_id));
-				 System.out.println(role_id + "role_id");
-
-				
-
-				EntityManager entityManager = entityManagerFactory.createEntityManager();
-				StoredProcedureQuery procedureQuery = entityManager
-						.createNamedStoredProcedureQuery(LoginModel.NamedQuery_RoleInsertStoreProcedure);
-				System.out.println("procedureQuery: "+procedureQuery);
-				entityManager.getTransaction().begin();
-				
-				procedureQuery.setParameter("username", username);
-				procedureQuery.setParameter("password", password);
-				procedureQuery.setParameter("role_id", Integer.parseInt(role_id));
-				procedureQuery.setParameter("CreatedBy", "Kiran");
-				procedureQuery.setParameter("UpdatedBy", "Aishwarya");
-				procedureQuery.setParameter("retry_pass", retry_pass);
-				procedureQuery.setParameter("ActionType", "Insert");
-
-				procedureQuery.execute();
-				entityManager.getTransaction().commit();
+		} finally {
+			if (entityManager != null && entityManager.isOpen()) {
 				entityManager.close();
-				// @SuppressWarnings("unchecked");
-				System.out.print("inserted successfully user register");
-
-				return "{    \r\n" + "  			\"RoleId\" : \"Inserted Sucessfully\"\r\n" + "  			}";
-
-			} catch (Exception e) {
-				return "Somthing went Wrong";
 			}
-		
 		}
-	
-		
-		//added by kiran
-		@GetMapping("/UserList")
-			public ModelAndView userList() {
-		    log.info("UserList API called");
-
-			ModelAndView mav = new ModelAndView("UserList");	
-			return mav;
-		}
-
-
-		//added by kiran
-		//start get method
-
-						@GetMapping(path = "/UserListData", produces = "application/json")
-							public String getUserString() {
-						    log.info("UserListData API called");
-
-								List<String> data = new ArrayList<String>();
-								JSONArray ja1 = new JSONArray();
-								ObjectMapper mapper = new ObjectMapper();
-								try {
-									EntityManager entityManager = entityManagerFactory.createEntityManager();
-									StoredProcedureQuery procedureQuery = entityManager
-											.createNamedStoredProcedureQuery(LoginModel.NamedQuery_UserListStoreProcedure);
-									procedureQuery.execute();
-									@SuppressWarnings("unchecked")
-									List<Object[]> resultList = procedureQuery.getResultList();
-									
-									
-									for (Object[] r : resultList) {
-										
-										JSONObject obj1 = new JSONObject();
-										
-										obj1.put("id", r[0]);
-										obj1.put("username", r[1]);
-										obj1.put("name", r[2]);
-										obj1.put("CreatedDate", r[3]);
-										obj1.put("CreatedBy", r[4]);
-										obj1.put("UpdatedDate", r[5]);
-										obj1.put("UpdatedBy", r[6]);
-										
-										ja1.add(obj1);
-										
-									
-									
-									
-									// return "Developer";
-									}
-									return ja1.toString();
-								} catch (Exception e) {
-									e.printStackTrace();
-
-								}
-								return null;
-							}
-
-							// End getmethod
-
 		
 	}
+
+	@SuppressWarnings("unchecked")
+	@GetMapping(path = "/UserListData", produces = "application/json")
+	public String getUserString() {
+		log.info("UserListData API called");
+		EntityManager entityManager = null;
+		JSONArray ja1 = new JSONArray();
+		try {
+			entityManager = entityManagerFactory.createEntityManager();
+			StoredProcedureQuery procedureQuery = entityManager
+					.createNamedStoredProcedureQuery(LoginModel.NamedQuery_UserListStoreProcedure);
+			procedureQuery.execute();
+			List<Object[]> resultList = procedureQuery.getResultList();
+
+			for (Object[] r : resultList) {
+
+				JSONObject obj1 = new JSONObject();
+
+				obj1.put("id", r[0]);
+				obj1.put("username", r[1]);
+				obj1.put("name", r[2]);
+				obj1.put("CreatedDate", r[3]);
+				obj1.put("CreatedBy", r[4]);
+				obj1.put("UpdatedDate", r[5]);
+				obj1.put("UpdatedBy", r[6]);
+
+				ja1.add(obj1);
+				// return "Developer";
+			}
+			return ja1.toString();
+		} catch (Exception e) {
+			  log.error("Error fetching User list", e);
+	            return "{\"error\": \"Internal Server Error\"}";
+		} finally {
+			if (entityManager != null && entityManager.isOpen()) {
+				entityManager.close();
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@GetMapping(path = "/GetBotNamelist", produces = "application/json")
+	public String getBotNameString() {
+		log.info("GetBotNamelist API called");
+		EntityManager entityManager = null;
+
+		JSONArray ja1 = new JSONArray();
+		try {
+			entityManager = entityManagerFactory.createEntityManager();
+			StoredProcedureQuery procedureQuery = entityManager
+					.createNamedStoredProcedureQuery(BotNameModel.NamedQuery_BotNameStoreProcedure_BotNameModel);
+			procedureQuery.execute();
+			List<Object[]> resultList = procedureQuery.getResultList();
+			for (Object[] r : resultList) {
+				// System.out.print(r[0]);
+				// System.out.print(r[1]);
+				JSONObject obj1 = new JSONObject();
+				obj1.put("BotId", r[0]);
+				obj1.put("BotName", r[1]);
+
+				ja1.add(obj1);
+
+			}
+
+			// return resultList;
+			return ja1.toString();
+			// return "Developer";
+
+		} catch (Exception e) {
+			  log.error("Error fetching Botname list", e);
+	            return "{\"error\": \"Internal Server Error\"}";
+		} finally {
+			if (entityManager != null && entityManager.isOpen()) {
+				entityManager.close();
+			}
+		}
+	}
+
+	// added by kiran
+	@SuppressWarnings("unchecked")
+	@GetMapping(path = "/GetRoleList", produces = "application/json")
+	public String getRoleString() {
+		log.info("GetRoleList API called");
+		EntityManager entityManager = null;
+
+		JSONArray ja1 = new JSONArray();
+		try {
+			entityManager = entityManagerFactory.createEntityManager();
+			StoredProcedureQuery procedureQuery = entityManager
+					.createNamedStoredProcedureQuery(LoginModel.NamedQuery_RoleStoreProcedure);
+			procedureQuery.execute();
+			List<Object[]> resultList = procedureQuery.getResultList();
+			for (Object[] r : resultList) {
+				// System.out.print(r[0]);
+				// System.out.print(r[1]);
+				JSONObject obj1 = new JSONObject();
+				obj1.put("role_id", r[0]);
+				obj1.put("name", r[1]);
+				ja1.add(obj1);
+
+			}
+
+			// return resultList;
+			return ja1.toString();
+			// return "Developer";
+
+		} catch (Exception e) {
+			  log.error("Error fetching Role list", e);
+	            return "{\"error\": \"Internal Server Error\"}";
+		}
+
+		finally {
+			if (entityManager != null && entityManager.isOpen()) {
+				entityManager.close();
+			}
+		}
+	}
+
+	// added by kiran
+	//@SuppressWarnings("unused")
+	@PostMapping(path = "/register", consumes = "application/json", produces = "application/json")
+	public String registerData(@RequestBody String postData) throws Exception {
+		log.info("register API called with data: {}", postData);
+
+		try {
+
+			 // Remove curly braces and split the data
+	        postData = postData.replace("{", "").replace("}", "").replace("\"", "");
+	        String[] arrOfStr = postData.split(",");
+
+	        // Extracting values manually
+	        String username = arrOfStr[0].split(":")[1].trim();
+	        String password = arrOfStr[1].split(":")[1].trim();
+	       String retry_pass = arrOfStr[2].split(":")[1].trim();
+	       String role_id = arrOfStr[3].split(":")[1].trim();
+	        String botNames = arrOfStr[4].split(":")[1].trim();
+	        String departmentNames = arrOfStr[5].split(":")[1].trim();
+	        String locationNames = arrOfStr[6].split(":")[1].trim();
+	        
+	     
+	        
+			EntityManager entityManager = entityManagerFactory.createEntityManager();
+			StoredProcedureQuery procedureQuery = entityManager
+					.createNamedStoredProcedureQuery(LoginModel.NamedQuery_RoleInsertStoreProcedure);
+			
+			System.out.println("You are in Register Api");
+			entityManager.getTransaction().begin();
 		
 
+			procedureQuery.setParameter("username", username);
+			procedureQuery.setParameter("password", password);
+			procedureQuery.setParameter("role_id", role_id);
+			procedureQuery.setParameter("CreatedBy", username);
+			procedureQuery.setParameter("UpdatedBy", username);
+			procedureQuery.setParameter("retry_pass", retry_pass);
+			procedureQuery.setParameter("ActionType", "Insert");
+			procedureQuery.execute();
 
+            // Second stored procedure
+            if (!botNames.isEmpty()) {
+                StoredProcedureQuery procedureQuery2 = entityManager.createNamedStoredProcedureQuery(LoginModel.BotNamedQuery_BotNameInsertStoreProcedure);
+                procedureQuery2.setParameter("pbotNames", botNames);
+                procedureQuery2.execute();
+            }
+
+            // Third stored procedure
+            if (!departmentNames.isEmpty()) {
+                StoredProcedureQuery procedureQuery3 = entityManager.createNamedStoredProcedureQuery(LoginModel.DepartmentNamedQuery_NameInsertStoreProcedure);
+                procedureQuery3.setParameter("pdepartmentNames", departmentNames);
+                procedureQuery3.execute();
+            }
+
+           // Fourth stored procedure
+            if (!locationNames.isEmpty()) {
+                StoredProcedureQuery procedureQuery4 = entityManager.createNamedStoredProcedureQuery(LoginModel.locationNamedQuery_NameInsertStoreProcedure);
+                procedureQuery4.setParameter("plocationNames", locationNames);
+                procedureQuery4.execute();
+            }
+	entityManager.getTransaction().commit();
+			entityManager.close();
+			// @SuppressWarnings("unchecked");
+			System.out.print("inserted successfully user register");
+
+			return "{    \r\n" + "  			\"RoleId\" : \"Inserted Sucessfully\"\r\n" + "  			}";
+
+		} catch (Exception e) {
+			return "Somthing went Wrong";
+		}
+
+	}
+
+	// added by kiran
+	@GetMapping("/UserList")
+	public ModelAndView userList() {
+		log.info("UserList API called");
+
+		ModelAndView mav = new ModelAndView("UserList");
+		return mav;
+	}
+
+}

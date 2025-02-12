@@ -256,17 +256,15 @@ public class LocationController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@GetMapping(path = "/GetLocationListData", produces = "application/json")
 	public String getlocationString() {
-		List<String> data = new ArrayList<String>();
 		JSONArray ja1 = new JSONArray();
-		ObjectMapper mapper = new ObjectMapper();
 		try {
 			EntityManager entityManager = entityManagerFactory.createEntityManager();
 			StoredProcedureQuery procedureQuery = entityManager
 					.createNamedStoredProcedureQuery(LocationModel.NamedQuery_LocationListStoreProcedure);
 			procedureQuery.execute();
-			@SuppressWarnings("unchecked")
 			List<Object[]> resultList = procedureQuery.getResultList();
 			for (Object[] r : resultList) {
 				// System.out.print(r[0]);

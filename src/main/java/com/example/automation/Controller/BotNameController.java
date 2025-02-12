@@ -2,12 +2,12 @@ package com.example.automation.Controller;
 
 import java.io.IOException;
 
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.http.HttpResponse;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,7 +34,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.example.automation.Model.BotNameModel;
 import com.example.automation.Model.LoginModel;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping(path = "/BotNameValues")
@@ -49,6 +48,15 @@ public class BotNameController {
 		mav.addObject("user", new LoginModel());
 		return mav;
 	}
+
+	@GetMapping("/EditUser")
+
+	public ModelAndView Edit2() {
+		ModelAndView mav = new ModelAndView("EditUserDetails");
+		mav.addObject("user", new LoginModel());
+		return mav;
+	}
+	
 
 	@GetMapping("/StartBot")
 
@@ -71,17 +79,15 @@ public class BotNameController {
 		return "BotName";
 	}
 
+	@SuppressWarnings("unchecked")
 	@GetMapping(path = "/GetBotNameDetails", produces = "application/json")
 	public String getBotNameString() {
-		List<String> data = new ArrayList<String>();
 		JSONArray ja1 = new JSONArray();
-		ObjectMapper mapper = new ObjectMapper();
 		try {
 			EntityManager entityManager = entityManagerFactory.createEntityManager();
 			StoredProcedureQuery procedureQuery = entityManager
 					.createNamedStoredProcedureQuery(BotNameModel.NamedQuery_BotAllStoreProcedure_BotNameModel);
 			procedureQuery.execute();
-			@SuppressWarnings("unchecked")
 			List<Object[]> resultList = procedureQuery.getResultList();
 			for (Object[] r : resultList) {
 				// System.out.print(r[0]);
@@ -111,6 +117,7 @@ public class BotNameController {
 	}
 
 	// -- 20 feb 2024 Vaibhav--/
+	@SuppressWarnings("unchecked")
 	@GetMapping(path = "/excel/export", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 	public void exportToExcel(HttpServletResponse response) throws IOException, Exception {
 		try (Workbook workbook = new XSSFWorkbook()) {
@@ -120,15 +127,12 @@ public class BotNameController {
 			response.setHeader("Content-Disposition", "attachment; filename=BotData.xlsx");
 
 			// Populate the workbook with data
-			List<String> data = new ArrayList<String>();
 			JSONArray ja1 = new JSONArray();
-			ObjectMapper mapper = new ObjectMapper();
 			try {
 				EntityManager entityManager = entityManagerFactory.createEntityManager();
 				StoredProcedureQuery procedureQuery = entityManager
 						.createNamedStoredProcedureQuery(BotNameModel.NamedQuery_BotAllStoreProcedure_BotNameModel);
 				procedureQuery.execute();
-				@SuppressWarnings("unchecked")
 				List<Object[]> resultList = procedureQuery.getResultList();
 				for (Object[] r : resultList) {
 					JSONObject obj1 = new JSONObject();
@@ -149,7 +153,7 @@ public class BotNameController {
 
 					// Create header row
 					Row headerRow = sheet.createRow(0);
-			     	headerRow.createCell(0).setCellValue("BotId");
+					headerRow.createCell(0).setCellValue("BotId");
 					headerRow.createCell(1).setCellValue("BotName");
 					headerRow.createCell(2).setCellValue("LocactionId");
 					headerRow.createCell(3).setCellValue("DepartmentId");
@@ -192,9 +196,7 @@ public class BotNameController {
 
 	@PostMapping(path = "/PostInsertBotData", consumes = "application/json", produces = "application/json")
 	public String PostDataChartResponse(@RequestBody String postData) throws Exception {
-		List<String> data1 = new ArrayList<String>();
 
-		JSONArray ja1 = new JSONArray();
 		try {
 
 			EntityManager entityManager = entityManagerFactory.createEntityManager();
@@ -202,8 +204,6 @@ public class BotNameController {
 					.createNamedStoredProcedureQuery(BotNameModel.NamedQuery_BotInsertStoreProcedure_BotNameModel);
 
 			entityManager.getTransaction().begin();
-
-			Date date = new Date();
 
 			procedureQuery.setParameter("BotName", "Bot10");
 			procedureQuery.setParameter("LocationId", 104);
@@ -234,17 +234,15 @@ public class BotNameController {
 
 	// start getmethod
 
+	@SuppressWarnings("unchecked")
 	@GetMapping(path = "/GetBotListData", produces = "application/json")
 	public String getbotString() {
-		List<String> data = new ArrayList<String>();
 		JSONArray ja1 = new JSONArray();
-		ObjectMapper mapper = new ObjectMapper();
 		try {
 			EntityManager entityManager = entityManagerFactory.createEntityManager();
 			StoredProcedureQuery procedureQuery = entityManager
 					.createNamedStoredProcedureQuery(BotNameModel.NamedQuery_BotListStoreProcedure_BotNameModel);
 			procedureQuery.execute();
-			@SuppressWarnings("unchecked")
 			List<Object[]> resultList = procedureQuery.getResultList();
 			for (Object[] r : resultList) {
 				// System.out.print(r[0]);
@@ -275,12 +273,44 @@ public class BotNameController {
 
 	// End getmethod
 
+	@PostMapping(path = "/lPostDeletBotData2", consumes = "application/json", produces = "application/json")
+	public String PostDeleteLocatioData2(@RequestBody String postData) throws Exception {
+		// System.out.print(postData);
+
+	
+		try {
+
+			// System.out.print(postData);
+			String[] arrOfStr = postData.split(":");
+			String BotId = "" + "'" + arrOfStr[1].toString() + "'";
+			BotId = BotId.replace("}", "").replace("\"", "").replace("'", "");
+			// System.out.print(BotId);
+
+			EntityManager entityManager = entityManagerFactory.createEntityManager();
+			StoredProcedureQuery procedureQuery = entityManager
+					.createNamedStoredProcedureQuery(LoginModel.NamedQuery_UserDeleteStoreProcedure_UserNameModel);
+			entityManager.getTransaction().begin();
+			procedureQuery.setParameter("p_BotId", Integer.parseInt(BotId));
+
+			procedureQuery.execute();
+			entityManager.getTransaction().commit();
+			entityManager.close();
+
+			return "{    \r\n" + "  			\"BotId\" : \"Deleted Sucessfully\"\r\n" + "  			}";
+			// }
+		} catch (Exception e) {
+
+			return "{    \r\n" + "  			\"Error\" : \"Something Went Wrong\"\r\n" + e + "  			}";
+
+		}
+
+	}
+
 	@PostMapping(path = "/lPostDeletBotData", consumes = "application/json", produces = "application/json")
 	public String PostDeleteLocatioData1(@RequestBody String postData) throws Exception {
 		// System.out.print(postData);
 
-		List<String> data1 = new ArrayList<String>();
-		JSONArray ja1 = new JSONArray();
+	
 		try {
 
 			// System.out.print(postData);
@@ -309,12 +339,12 @@ public class BotNameController {
 
 	}
 
+	@SuppressWarnings("rawtypes")
 	@PostMapping(path = "/lPostEditBotData", consumes = "application/json", produces = "application/json")
 	public Object lPostEditLocationData1(@RequestBody String postData, HttpResponse response) throws Exception {
 		// System.out.print(postData);
 
-		List<String> data1 = new ArrayList<String>();
-		JSONArray ja1 = new JSONArray();
+	
 		String[] arrOfStr = postData.split(":");
 		String BotId = "" + "'" + arrOfStr[1].toString() + "'";
 		BotId = BotId.replace("}", "").replace("\"", "").replace("'", "");
@@ -341,8 +371,7 @@ public class BotNameController {
 
 	@PostMapping(path = "/PostNewBotData", consumes = "application/json", produces = "application/json")
 	public String PostBotDataResponse(@RequestBody String postData) throws Exception {
-		List<String> data1 = new ArrayList<String>();
-		JSONArray ja1 = new JSONArray();
+	
 		try {
 
 			String[] arrOfStr = postData.split(",");
@@ -390,7 +419,6 @@ public class BotNameController {
 					.createNamedStoredProcedureQuery(BotNameModel.NamedQuery_BotInsertStoreProcedure_BotNameModel);
 
 			entityManager.getTransaction().begin();
-			Date date = new Date();
 
 			procedureQuery.setParameter("BotName", BotName);
 			procedureQuery.setParameter("LocationId", Integer.parseInt(LocationId));
@@ -561,8 +589,6 @@ public class BotNameController {
 	// on 06/03/24 Added by Vaibhav
 	@PostMapping(path = "/PostUpdateBotData", consumes = "application/json", produces = "application/json")
 	public String PostupdateBotDataResponse(@RequestBody String postData) throws Exception {
-		List<String> data1 = new ArrayList<String>();
-		JSONArray ja1 = new JSONArray();
 		try {
 
 			String[] arrOfStr = postData.split(",");
@@ -617,7 +643,6 @@ public class BotNameController {
 					.createNamedStoredProcedureQuery(BotNameModel.NamedQuery_BotUpdateStoreProcedure_BotNameModel);
 
 			entityManager.getTransaction().begin();
-			Date date = new Date();
 			procedureQuery.setParameter("p_BotId", Integer.parseInt(BotId));
 			procedureQuery.setParameter("p_BotName", BotName);
 			procedureQuery.setParameter("p_LocationId", Integer.parseInt(LocationId));
@@ -637,7 +662,6 @@ public class BotNameController {
 			return "{    \r\n" + "  			\"BotId\" : \"Updated Sucessfully\"\r\n" + "  			}";
 			// }
 		} catch (Exception e) {
-			// TODO: handle exception
 			return "Somthing went Wrong";
 		}
 		// Create New Controller in BotName Controller. POst in that call the store
@@ -646,9 +670,81 @@ public class BotNameController {
 		// text and Drop Dwsn ok? ok sir
 	}
 
+	// on 06/03/24 Added by Vaibhav
+	@PostMapping(path = "/PostUpdateBotData2", consumes = "application/json", produces = "application/json")
+	public String PostupdateBotDataResponse2(@RequestBody String postData) throws Exception {
+		System.out.println("in update" + "vai");
+
+		try {
+			// Remove curly braces and quotes, and then split the data by comma
+			postData = postData.replace("{", "").replace("}", "").replace("\"", "");
+			String[] arrOfStr = postData.split(",");
+
+			// Extracting values manually
+			String botNames = arrOfStr[0].split(":")[1].trim();
+			String username = arrOfStr[1].split(":")[1].trim();
+			String locationNames = arrOfStr[2].split(":")[1].trim();
+			String departmentNames = arrOfStr[3].split(":")[1].trim();
+			String role_id = arrOfStr[4].split(":")[1].trim();
+			String id = arrOfStr[5].split(":")[1].trim();
+
+			EntityManager entityManager = entityManagerFactory.createEntityManager();
+			StoredProcedureQuery procedureQuery = entityManager
+					.createNamedStoredProcedureQuery(LoginModel.NamedQuery_RoleUpdateStoreProcedure);
+
+			System.out.println("You are in Register Api");
+			entityManager.getTransaction().begin();
+
+			procedureQuery.setParameter("p_id", Integer.parseInt(id));
+			procedureQuery.setParameter("username", username);
+			procedureQuery.setParameter("role_id", role_id);
+			procedureQuery.setParameter("CreatedBy", username);
+			procedureQuery.setParameter("UpdatedBy", username);
+			procedureQuery.setParameter("ActionType", "Update");
+			procedureQuery.execute();
+
+			// Second stored procedure
+			if (!botNames.isEmpty()) {
+				StoredProcedureQuery procedureQuery2 = entityManager
+						.createNamedStoredProcedureQuery(LoginModel.BotNamedQuery_BotNameUpdateStoreProcedure);
+				procedureQuery2.setParameter("p_id", Integer.parseInt(id));
+				procedureQuery2.setParameter("pbotNames", botNames);
+				procedureQuery2.execute();
+			}
+
+			// Third stored procedure
+			if (!departmentNames.isEmpty()) {
+				StoredProcedureQuery procedureQuery3 = entityManager
+						.createNamedStoredProcedureQuery(LoginModel.DepartmentNamedQuery_NameUpdateStoreProcedure);
+				procedureQuery3.setParameter("p_id", Integer.parseInt(id));
+				procedureQuery3.setParameter("pdepartmentNames", departmentNames);
+				procedureQuery3.execute();
+			}
+
+			// Fourth stored procedure
+			if (!locationNames.isEmpty()) {
+				StoredProcedureQuery procedureQuery4 = entityManager
+						.createNamedStoredProcedureQuery(LoginModel.locationNamedQuery_NameUpdateStoreProcedure);
+				procedureQuery4.setParameter("p_id", Integer.parseInt(id));
+				procedureQuery4.setParameter("plocationNames", locationNames);
+				procedureQuery4.execute();
+			}
+			entityManager.getTransaction().commit();
+			entityManager.close();
+			// @SuppressWarnings("unchecked");
+			System.out.print(" successfully user Eddited");
+
+			return "{    \r\n" + "  			\"RoleId\" : \"Iddited Sucessfully\"\r\n" + "  			}";
+
+		} catch (Exception e) {
+			return "Somthing went Wrong";
+		}
+
+	}
+
+	@SuppressWarnings("unchecked")
 	@PostMapping(path = "/PostBotEditDataEdit", consumes = "application/json", produces = "application/json")
 	public String PostBotEditData(@RequestBody String postData) throws Exception {
-		List<String> data1 = new ArrayList<String>();
 		JSONArray ja1 = new JSONArray();
 		try {
 			// System.out.print(postData);
@@ -662,7 +758,6 @@ public class BotNameController {
 					.createNamedStoredProcedureQuery(BotNameModel.NamedQuery_BotIdtoreProcedure_BotNameModel);
 			procedureQuery.setParameter("iBotId", Integer.parseInt(BotId));
 			procedureQuery.execute();
-			@SuppressWarnings("unchecked")
 			List<Object[]> resultList = procedureQuery.getResultList();
 			for (Object[] r : resultList) {
 
@@ -678,7 +773,82 @@ public class BotNameController {
 			return ja1.toString();
 
 		} catch (Exception e) {
-			// TODO: handle exception
+			return "{    \r\n" + "  			\"BotId\" : \"Something went wrong\"\r\n" + "  			}";
+		}
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@PostMapping(path = "/PostUserEditDataEdit", consumes = "application/json", produces = "application/json")
+	public String PostEditUsertData(@RequestBody String postData) throws Exception {
+		JSONArray ja1 = new JSONArray();
+		try {
+			// System.out.print(postData);
+			String[] arrOfStr = postData.split(":");
+			String BotId = "" + "'" + arrOfStr[1].toString() + "'";
+			BotId = BotId.replace("}", "").replace("\"", "").replace("'", "");
+			// System.out.print(Integer.parseInt(BotId) + "Valid");
+
+			EntityManager entityManager = entityManagerFactory.createEntityManager();
+			StoredProcedureQuery procedureQuery = entityManager
+					.createNamedStoredProcedureQuery(LoginModel.NamedQuery_UserIdtoreProcedure_UserNameModel);
+			procedureQuery.setParameter("iUserId", Integer.parseInt(BotId));
+			procedureQuery.execute();
+			List<Object[]> resultList = procedureQuery.getResultList();
+			for (Object[] r : resultList) {
+
+				JSONObject obj1 = new JSONObject();
+				obj1.put("Username", r[0]);
+				obj1.put("role", r[1]);
+				obj1.put("Botname", r[2]);
+				obj1.put("Departmentname", r[3]);
+				obj1.put("Locationname", r[4]);
+
+				ja1.add(obj1);
+			}
+
+			return ja1.toString();
+
+		} catch (Exception e) {
+			return "{    \r\n" + "  			\"BotId\" : \"Something went wrong\"\r\n" + "  			}";
+		}
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@PostMapping(path = "/PostBotEditDataEdit2", consumes = "application/json", produces = "application/json")
+	public String PostBotEditData2(@RequestBody String postData) throws Exception {
+		JSONArray ja1 = new JSONArray();
+		try {
+			// System.out.print(postData);
+			String[] arrOfStr = postData.split(":");
+			String UserId = "" + "'" + arrOfStr[1].toString() + "'";
+			UserId = UserId.replace("}", "").replace("\"", "").replace("'", "");
+			// System.out.print(Integer.parseInt(BotId) + "Valid");
+
+			EntityManager entityManager = entityManagerFactory.createEntityManager();
+			StoredProcedureQuery procedureQuery = entityManager
+					.createNamedStoredProcedureQuery(LoginModel.NamedQuery_UserstoreProcedure_UserNameModel);
+			procedureQuery.setParameter("iUserId", Integer.parseInt(UserId));
+			procedureQuery.execute();
+
+			List<Object[]> resultList = procedureQuery.getResultList();
+			for (Object[] r : resultList) {
+
+				JSONObject obj1 = new JSONObject();
+				obj1.put("bot_names", r[3]);
+				obj1.put("id", r[0]);
+				obj1.put("username", r[1]);
+				obj1.put("role", r[2]);
+				obj1.put("department_names", r[4]);
+				obj1.put("location_names", r[5]);
+
+				ja1.add(obj1);
+			}
+
+			return ja1.toString();
+
+		} catch (Exception e) {
 			return "{    \r\n" + "  			\"BotId\" : \"Something went wrong\"\r\n" + "  			}";
 		}
 
@@ -686,8 +856,6 @@ public class BotNameController {
 
 	@PostMapping(path = "/PostBotEditBotData", consumes = "application/json", produces = "application/json")
 	public String PostBotListDataResponse(@RequestBody String postData) throws Exception {
-		List<String> data1 = new ArrayList<String>();
-		JSONArray ja1 = new JSONArray();
 		try {
 			// {"BotId":"2","BotName":"TradeQuery","LocationId":"1","DepartmentId":"2","IsActive":"0"}
 			// BotId:2Bot IdBotName:TradeQueryBot NameLocationId:1Location
@@ -766,7 +934,6 @@ public class BotNameController {
 			return "{    \r\n" + "  			\"BotId\" : \"Edit Sucessfully\"\r\n" + "  			}";
 			// }
 		} catch (Exception e) {
-			// TODO: handle exception
 			return "Somthing went Wrong";
 		}
 	}
