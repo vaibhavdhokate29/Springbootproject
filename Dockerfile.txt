@@ -1,0 +1,14 @@
+# Use OpenJDK image
+FROM openjdk:17-jdk-slim
+
+# Set working directory
+WORKDIR /app
+
+# Copy the JAR file
+COPY target/*.jar automation-0.0.1-SNAPSHOT.jar
+
+# Expose the port your app runs on (default 8080)
+EXPOSE 8080
+
+# Run the JAR file
+CMD ["java", "-jar", "automation-0.0.1-SNAPSHOT.jar"]
